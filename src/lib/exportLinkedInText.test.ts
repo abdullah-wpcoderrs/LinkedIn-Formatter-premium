@@ -47,10 +47,22 @@ describe('exportLinkedInText', () => {
     );
   });
 
+  it('exports underline as combining underline text', () => {
+    const document = doc([paragraph([text('Underlined', [{ type: 'underline' }])])]);
+
+    expect(exportLinkedInText(document)).toBe('U̲n̲d̲e̲r̲l̲i̲n̲e̲d̲');
+  });
+
   it('preserves hashtags and mentions inside styled text', () => {
     const document = doc([paragraph([text('Ship it #LinkedIn @Ada', [{ type: 'bold' }])])]);
 
     expect(exportLinkedInText(document)).toBe(`${styleText('Ship it ', { bold: true })}#LinkedIn @Ada`);
+  });
+
+  it('preserves emoji in exported text and styled ranges', () => {
+    const document = doc([paragraph([text('Launch 🚀', [{ type: 'bold' }, { type: 'underline' }]), text(' ✅')])]);
+
+    expect(exportLinkedInText(document)).toBe(`${styleText('Launch 🚀', { bold: true, underline: true })} ✅`);
   });
 
   it('exports links as readable label plus URL and avoids duplicate bare URLs', () => {
@@ -87,7 +99,7 @@ describe('exportLinkedInText', () => {
     expect(exportLinkedInText(document)).toBe('• First\n• Second\n\n3. Third\n4. Fourth');
   });
 
-  it('flattens nested lists predictably instead of exporting indentation-dependent structure', () => {
+  it('exports nested lists with plain text indentation', () => {
     const document = doc([
       {
         type: 'bulletList',
@@ -106,7 +118,20 @@ describe('exportLinkedInText', () => {
       },
     ]);
 
-    expect(exportLinkedInText(document)).toBe('• Parent\n• Child');
+    expect(exportLinkedInText(document)).toBe('• Parent\n  • Child');
+  });
+
+  it('exports blockquotes and horizontal dividers as plain text', () => {
+    const document = doc([
+      {
+        type: 'blockquote',
+        content: [paragraph([text('Quoted')]), paragraph([text('Follow-up')])],
+      },
+      { type: 'horizontalRule' },
+      paragraph([text('After')]),
+    ]);
+
+    expect(exportLinkedInText(document)).toBe('> Quoted\n>\n> Follow-up\n────────\nAfter');
   });
 
   it('strips unsupported leaf nodes and keeps supported text around them', () => {

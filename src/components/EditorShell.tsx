@@ -1,6 +1,7 @@
 import CharacterCount from '@tiptap/extension-character-count';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -16,13 +17,12 @@ interface EditorShellProps {
 
 const extensions = [
   StarterKit.configure({
-    blockquote: false,
     codeBlock: false,
-    horizontalRule: false,
     heading: {
       levels: [2, 3],
     },
   }),
+  Underline,
   Link.configure({
     autolink: true,
     defaultProtocol: 'https',

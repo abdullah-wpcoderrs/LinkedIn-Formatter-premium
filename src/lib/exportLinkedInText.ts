@@ -1,6 +1,8 @@
 import { LINKEDIN_POST_CHARACTER_LIMIT, getCharacterCountStatus } from './constants';
 import { type UnicodeStyleOptions, styleText } from './unicodeStyles';
 
+const HORIZONTAL_RULE_TEXT = '────────';
+
 export interface EditorMark {
   type?: string;
   attrs?: Record<string, unknown>;
@@ -43,10 +45,19 @@ export function getLinkedInCharacterSummary(text: string) {
 }
 
 function renderBlocks(nodes: EditorNode[]): string {
-  return nodes
-    .map((node) => renderBlock(node))
-    .filter((text) => text.length > 0)
-    .join('\n\n');
+  const renderedBlocks = nodes
+    .map((node) => ({ node, text: renderBlock(node) }))
+    .filter((block) => block.text.length > 0);
+
+  return renderedBlocks.reduce((output, block, index) => {
+    if (index === 0) {
+      return block.text;
+    }
+
+    const previous = renderedBlocks[index - 1];
+    const separator = previous.node.type === 'horizontalRule' || block.node.type === 'horizontalRule' ? '\n' : '\n\n';
+    return `${output}${separator}${block.text}`;
+  }, '');
 }
 
 function renderBlock(node: EditorNode): string {
@@ -56,6 +67,10 @@ function renderBlock(node: EditorNode): string {
     case 'paragraph':
     case 'heading':
       return renderInline(node.content ?? []);
+    case 'blockquote':
+      return renderBlockquote(node);
+    case 'horizontalRule':
+      return HORIZONTAL_RULE_TEXT;
     case 'bulletList':
       return renderList(node, 'bullet');
     case 'orderedList':
@@ -104,18 +119,26 @@ function renderTextNode(node: EditorNode): string {
   return `${styledText} (${href})`;
 }
 
-function renderList(node: EditorNode, kind: 'bullet' | 'ordered'): string {
+function renderBlockquote(node: EditorNode): string {
+  return renderBlocks(node.content ?? [])
+    .split('\n')
+    .map((line) => (line.trim() ? `> ${line}` : '>'))
+    .join('\n');
+}
+
+function renderList(node: EditorNode, kind: 'bullet' | 'ordered', depth = 0): string {
   let orderedIndex = getOrderedStart(node);
   const lines: string[] = [];
+  const indent = '  '.repeat(depth);
 
   for (const item of node.content ?? []) {
     if (item.type !== 'listItem') {
       continue;
     }
 
-    const itemLines = renderListItemLines(item);
+    const itemLines = renderListItemLines(item, depth);
     const firstLine = itemLines.shift() ?? '';
-    const prefix = kind === 'bullet' ? '• ' : `${orderedIndex}. `;
+    const prefix = kind === 'bullet' ? `${indent}• ` : `${indent}${orderedIndex}. `;
     lines.push(`${prefix}${firstLine}`.trimEnd());
     lines.push(...itemLines);
     orderedIndex += 1;
@@ -124,7 +147,7 @@ function renderList(node: EditorNode, kind: 'bullet' | 'ordered'): string {
   return lines.join('\n');
 }
 
-function renderListItemLines(node: EditorNode): string[] {
+function renderListItemLines(node: EditorNode, depth = 0): string[] {
   const leadParts: string[] = [];
   const extraLines: string[] = [];
 
@@ -136,9 +159,9 @@ function renderListItemLines(node: EditorNode): string[] {
         leadParts.push(text);
       }
     } else if (child.type === 'bulletList') {
-      extraLines.push(...renderList(child, 'bullet').split('\n').filter(Boolean));
+      extraLines.push(...renderList(child, 'bullet', depth + 1).split('\n').filter(Boolean));
     } else if (child.type === 'orderedList') {
-      extraLines.push(...renderList(child, 'ordered').split('\n').filter(Boolean));
+      extraLines.push(...renderList(child, 'ordered', depth + 1).split('\n').filter(Boolean));
     } else {
       const text = renderBlock(child).trim();
 
@@ -157,6 +180,7 @@ function getStyleOptions(marks: EditorMark[]): UnicodeStyleOptions {
     italic: marks.some((mark) => mark.type === 'italic'),
     code: marks.some((mark) => mark.type === 'code'),
     strike: marks.some((mark) => mark.type === 'strike'),
+    underline: marks.some((mark) => mark.type === 'underline'),
   };
 }
 

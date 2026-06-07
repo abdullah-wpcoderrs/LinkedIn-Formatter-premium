@@ -58,31 +58,64 @@ button:disabled {
 
 .app-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 18px;
   padding: 18px 0 24px;
 }
 
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #2ea44f;
+  border-radius: 8px;
+  color: #fff;
+  background: #2ea44f;
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(46, 164, 79, 0.24);
+}
+
+.github-link:hover,
+.github-link:focus-visible {
+  border-color: #2c974b;
+  background: #2c974b;
+  outline: none;
+}
+
+.github-mark {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
 .brand-lockup {
-  display: grid;
-  place-items: center;
   width: 56px;
   height: 56px;
-  border-radius: 8px;
-  background: var(--linkedin-blue);
-  color: #fff;
+  flex: 0 0 56px;
+  overflow: hidden;
+  border-radius: 7px;
+  color: var(--linkedin-blue);
+  background: #fff;
   box-shadow: 0 12px 30px rgba(10, 102, 194, 0.24);
 }
 
 .brand-mark {
-  font-size: 1.55rem;
-  font-weight: 800;
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
 }
 
 .eyebrow {
   margin: 0 0 4px;
   color: var(--linkedin-blue-dark);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -95,7 +128,7 @@ h2 {
 }
 
 h1 {
-  font-size: clamp(2rem, 4vw, 4.3rem);
+  font-size: 2.5rem;
 }
 
 h2 {
@@ -134,7 +167,12 @@ h2 {
   max-width: 320px;
   margin: 0;
   color: var(--warning);
-  font-size: 0.86rem;
+  font-size: 0.875rem;
+}
+
+.panel-alert {
+  max-width: none;
+  padding: 14px 20px 0;
 }
 
 .editor-shell {
@@ -146,8 +184,8 @@ h2 {
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
+  gap: 8px;
+  padding: 10px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(180deg, #fff, #f8fbff);
   overflow-x: auto;
@@ -156,8 +194,8 @@ h2 {
 .toolbar-group {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding-right: 10px;
+  gap: 4px;
+  padding-right: 8px;
   border-right: 1px solid var(--line);
 }
 
@@ -172,9 +210,9 @@ h2 {
 .tool-button {
   display: inline-grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
   border: 1px solid transparent;
   border-radius: 8px;
   color: var(--ink);
@@ -198,6 +236,34 @@ h2 {
   color: #aab3c1;
 }
 
+.emoji-group {
+  color: var(--muted);
+}
+
+.emoji-button {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 34px;
+  flex: 0 0 30px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 0.875rem;
+}
+
+.emoji-button:hover:not(:disabled),
+.emoji-button:focus-visible {
+  border-color: rgba(10, 102, 194, 0.26);
+  background: var(--surface-alt);
+  outline: none;
+}
+
+.emoji-button:disabled {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+
 .editor-frame {
   flex: 1;
   padding: 0;
@@ -208,7 +274,7 @@ h2 {
   padding: 26px 30px 36px;
   outline: none;
   color: #1f2937;
-  font-size: 1.04rem;
+  font-size: 1rem;
   line-height: 1.65;
   background: #fff;
 }
@@ -219,12 +285,75 @@ h2 {
 
 .rich-editor-content ul,
 .rich-editor-content ol {
-  margin: 0 0 1rem 1.4rem;
+  margin: 0 0 1rem;
   padding: 0;
+  list-style: none;
+}
+
+.rich-editor-content ul ul,
+.rich-editor-content ul ol,
+.rich-editor-content ol ul,
+.rich-editor-content ol ol {
+  margin: 0.2rem 0 0 1rem;
+}
+
+.rich-editor-content ol {
+  counter-reset: linkedin-list;
+}
+
+.rich-editor-content li {
+  position: relative;
+  margin: 0.2rem 0;
+  padding-left: 1rem;
+}
+
+.rich-editor-content ul > li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+}
+
+.rich-editor-content ol > li {
+  counter-increment: linkedin-list;
+  padding-left: 1.45rem;
+}
+
+.rich-editor-content ol > li::before {
+  content: counter(linkedin-list) ".";
+  position: absolute;
+  left: 0;
 }
 
 .rich-editor-content li p {
   margin: 0.2rem 0;
+}
+
+.rich-editor-content blockquote {
+  margin: 1rem 0;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.rich-editor-content blockquote p {
+  margin: 0.2rem 0;
+}
+
+.rich-editor-content blockquote p::before {
+  content: "> ";
+  color: var(--muted);
+}
+
+.rich-editor-content hr {
+  height: auto;
+  margin: 1.4rem 0;
+  border: 0;
+  color: var(--muted);
+  text-align: left;
+}
+
+.rich-editor-content hr::before {
+  content: "────────";
 }
 
 .rich-editor-content a {
@@ -256,25 +385,17 @@ h2 {
   gap: 10px;
   margin-bottom: 0;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
 }
 
 .character-meter strong {
   color: var(--ink);
 }
 
-.meter-status {
-  display: block;
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
-.character-meter.is-warning .meter-status,
 .character-meter.is-warning strong {
   color: var(--warning);
 }
 
-.character-meter.is-over .meter-status,
 .character-meter.is-over strong {
   color: var(--danger);
 }
@@ -353,7 +474,7 @@ h2 {
   min-height: 24px;
   margin: 0;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .copy-panel.is-success .copy-status {
@@ -369,7 +490,7 @@ h2 {
   border-top: 1px solid var(--line);
   padding-top: 14px;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .help-panel summary {
@@ -412,11 +533,18 @@ h2 {
 @media (max-width: 640px) {
   .app-header {
     align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .github-link {
+    order: 3;
+    margin-left: 64px;
   }
 
   .brand-lockup {
     width: 46px;
     height: 46px;
+    flex-basis: 46px;
   }
 
   .panel-heading {

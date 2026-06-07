@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { applyStrikethrough, styleText } from './unicodeStyles';
+import { applyStrikethrough, applyUnderline, styleText } from './unicodeStyles';
 
 describe('styleText', () => {
   it('maps ASCII letters and digits to sans-serif bold Unicode characters', () => {
@@ -27,5 +27,14 @@ describe('styleText', () => {
 
   it('can apply experimental strikethrough to non-whitespace characters', () => {
     expect(applyStrikethrough('a b')).toBe('a̶ b̶');
+  });
+
+  it('can apply experimental underline to non-whitespace characters', () => {
+    expect(applyUnderline('a b')).toBe('a̲ b̲');
+    expect(styleText('Underlined #LinkedIn', { underline: true })).toBe('U̲n̲d̲e̲r̲l̲i̲n̲e̲d̲ #LinkedIn');
+  });
+
+  it('preserves emoji when applying combining styles', () => {
+    expect(styleText('Ship 🚀 now', { underline: true, strike: true })).toBe('S̶̲h̶̲i̶̲p̶̲ 🚀 n̶̲o̶̲w̶̲');
   });
 });

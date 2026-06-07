@@ -2,15 +2,21 @@
 
 A client-side formatter for drafting LinkedIn posts with familiar rich text controls and copying LinkedIn-ready plain text. The editor uses TipTap for word-processor-style selection behavior, then exports bold, italic, code, lists, and links into plain text that can be pasted into LinkedIn.
 
+Live site: https://markrussinovich.github.io/LinkedIn-Formatter/
+
+![LinkedIn Post Formatter screenshot](docs/screenshot.png)
+
 This is not an official LinkedIn app and does not post to LinkedIn directly. All draft content stays in the browser.
 
 ## Features
 
 - TipTap rich text editor with toolbar controls and keyboard shortcuts.
-- Sans-serif Unicode bold, italic, bold italic, code, and experimental strikethrough export.
-- Flat bullet and numbered lists for LinkedIn-friendly paste behavior.
+- Sans-serif Unicode bold, italic, bold italic, code, experimental underline, and experimental strikethrough export.
+- Nested bullet and numbered lists with LinkedIn-friendly plain text indentation.
+- Blockquotes and horizontal dividers exported as plain text.
 - Links export as readable label plus URL, for example `Read more (https://example.com)`.
 - Hashtags and mentions remain plain text so LinkedIn has the best chance to recognize them.
+- Emoji insertion toolbar with emoji-safe export behavior.
 - Live plain-text preview and 3,000-character LinkedIn post counter.
 - One-click copy with a fallback for browsers that block the Clipboard API.
 - Local draft autosave with reset/recovery behavior.
@@ -55,6 +61,10 @@ The character counter is based on the exported clipboard text and uses a 3,000-c
 
 ## MVP Scope
 
-Supported now: paragraphs, hard breaks, bold, italic, code, strikethrough, flat bullets, flat numbered lists, links, hashtags, mentions, local autosave, and copy.
+Supported now: paragraphs, hard breaks, bold, italic, bold italic, underline, code, strikethrough, nested bullets, nested numbered lists, blockquotes, horizontal dividers, links, emoji, hashtags, mentions, local autosave, and copy.
 
-Deferred intentionally: nested lists, blockquotes, underline, horizontal dividers, real LinkedIn entity mentions, direct posting, analytics, and server-side storage.
+Still deferred intentionally: real LinkedIn entity mentions, direct posting, analytics, and server-side storage. These require LinkedIn API access, user authentication, analytics consent/infrastructure, or a backend service, which are outside the current static client-only GitHub Pages app.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

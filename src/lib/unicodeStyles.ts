@@ -3,11 +3,14 @@ export interface UnicodeStyleOptions {
   italic?: boolean;
   code?: boolean;
   strike?: boolean;
+  underline?: boolean;
 }
 
 type UnicodeVariant = 'bold' | 'italic' | 'boldItalic' | 'monospace';
 
 const LINKEDIN_TOKEN_PATTERN = /(https?:\/\/[^\s]+|[#@][A-Za-z0-9_][A-Za-z0-9_.-]*)/gu;
+const EMOJI_PATTERN = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u;
+const COMBINING_MARK_PATTERN = /\p{Mark}/u;
 
 const VARIANT_RANGES = {
   bold: {
@@ -51,16 +54,28 @@ export function styleText(text: string, options: UnicodeStyleOptions = {}): stri
 }
 
 export function applyStrikethrough(text: string): string {
-  return Array.from(text)
-    .map((character) => (character.trim() ? `${character}\u0336` : character))
-    .join('');
+  return applyCombiningMark(text, '\u0336');
+}
+
+export function applyUnderline(text: string): string {
+  return applyCombiningMark(text, '\u0332');
 }
 
 function styleSegment(text: string, options: UnicodeStyleOptions): string {
   const variant = getVariant(options);
-  const mapped = variant ? Array.from(text).map((character) => mapAsciiCharacter(character, variant)).join('') : text;
+  let mapped = variant ? Array.from(text).map((character) => mapAsciiCharacter(character, variant)).join('') : text;
+
+  if (options.underline) {
+    mapped = applyUnderline(mapped);
+  }
 
   return options.strike ? applyStrikethrough(mapped) : mapped;
+}
+
+function applyCombiningMark(text: string, mark: string): string {
+  return Array.from(text)
+    .map((character) => (character.trim() && !EMOJI_PATTERN.test(character) && !COMBINING_MARK_PATTERN.test(character) ? `${character}${mark}` : character))
+    .join('');
 }
 
 function getVariant(options: UnicodeStyleOptions): UnicodeVariant | null {

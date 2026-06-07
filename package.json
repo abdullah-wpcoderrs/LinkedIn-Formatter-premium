@@ -2,6 +2,7 @@
   "name": "linkedin-format",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173",
@@ -14,6 +15,7 @@
     "@tiptap/extension-character-count": "^2.27.1",
     "@tiptap/extension-link": "^2.27.1",
     "@tiptap/extension-placeholder": "^2.27.1",
+    "@tiptap/extension-underline": "^2.27.2",
     "@tiptap/react": "^2.27.1",
     "@tiptap/starter-kit": "^2.27.1",
     "lucide-react": "^0.475.0",

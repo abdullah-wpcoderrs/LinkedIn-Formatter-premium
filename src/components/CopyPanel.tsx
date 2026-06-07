@@ -12,7 +12,7 @@ interface CopyPanelProps {
 }
 
 export function CopyPanel({ disabled, status, onCopy }: CopyPanelProps) {
-  const StatusIcon = status.state === 'success' ? CheckCircle2 : status.state === 'error' ? AlertTriangle : Copy;
+  const StatusIcon = status.state === 'success' ? CheckCircle2 : AlertTriangle;
 
   return (
     <div className={`copy-panel is-${status.state}`}>
@@ -20,10 +20,12 @@ export function CopyPanel({ disabled, status, onCopy }: CopyPanelProps) {
         <Copy aria-hidden="true" size={18} />
         Copy for LinkedIn
       </button>
-      <p className="copy-status" role="status" aria-live="polite">
-        <StatusIcon aria-hidden="true" size={16} />
-        {status.message}
-      </p>
+      {status.state !== 'idle' ? (
+        <p className="copy-status" role="status" aria-live="polite">
+          <StatusIcon aria-hidden="true" size={16} />
+          {status.message}
+        </p>
+      ) : null}
     </div>
   );
 }

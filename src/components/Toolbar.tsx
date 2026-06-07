@@ -1,5 +1,22 @@
 import type { Editor } from '@tiptap/react';
-import { Bold, Code2, Italic, Link2, List, ListOrdered, Redo2, Strikethrough, Trash2, Undo2 } from 'lucide-react';
+import {
+  Bold,
+  Code2,
+  IndentDecrease,
+  IndentIncrease,
+  Italic,
+  Link2,
+  List,
+  ListOrdered,
+  Minus,
+  Quote,
+  Redo2,
+  SmilePlus,
+  Strikethrough,
+  Trash2,
+  Underline,
+  Undo2,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface ToolbarProps {
@@ -15,6 +32,8 @@ interface ToolButtonProps {
   disabled?: boolean;
   onClick: () => void;
 }
+
+const EMOJI_CHOICES = ['✨', '🚀', '💡', '✅', '🔥', '👏', '📌', '🎯'];
 
 export function Toolbar({ editor, onReset }: ToolbarProps) {
   function run(command: () => boolean) {
@@ -46,6 +65,14 @@ export function Toolbar({ editor, onReset }: ToolbarProps) {
 
     const href = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
     editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
+  }
+
+  function insertEmoji(emoji: string) {
+    if (!editor) {
+      return;
+    }
+
+    editor.chain().focus().insertContent(emoji).run();
   }
 
   return (
@@ -85,6 +112,14 @@ export function Toolbar({ editor, onReset }: ToolbarProps) {
           onClick={() => run(() => editor!.chain().focus().toggleItalic().run())}
         />
         <ToolButton
+          label="Underline"
+          shortcut="Ctrl+U"
+          icon={Underline}
+          active={editor?.isActive('underline') ?? false}
+          disabled={!editor}
+          onClick={() => run(() => editor!.chain().focus().toggleUnderline().run())}
+        />
+        <ToolButton
           label="Code"
           icon={Code2}
           active={editor?.isActive('code') ?? false}
@@ -116,6 +151,52 @@ export function Toolbar({ editor, onReset }: ToolbarProps) {
           disabled={!editor}
           onClick={() => run(() => editor!.chain().focus().toggleOrderedList().run())}
         />
+        <ToolButton
+          label="Indent list item"
+          icon={IndentIncrease}
+          disabled={!editor?.can().sinkListItem('listItem')}
+          onClick={() => run(() => editor!.chain().focus().sinkListItem('listItem').run())}
+        />
+        <ToolButton
+          label="Outdent list item"
+          icon={IndentDecrease}
+          disabled={!editor?.can().liftListItem('listItem')}
+          onClick={() => run(() => editor!.chain().focus().liftListItem('listItem').run())}
+        />
+      </div>
+
+      <div className="toolbar-group" aria-label="Blocks">
+        <ToolButton
+          label="Blockquote"
+          icon={Quote}
+          active={editor?.isActive('blockquote') ?? false}
+          disabled={!editor}
+          onClick={() => run(() => editor!.chain().focus().toggleBlockquote().run())}
+        />
+        <ToolButton
+          label="Horizontal divider"
+          icon={Minus}
+          disabled={!editor?.can().setHorizontalRule()}
+          onClick={() => run(() => editor!.chain().focus().setHorizontalRule().run())}
+        />
+      </div>
+
+      <div className="toolbar-group emoji-group" aria-label="Emojis">
+        <SmilePlus aria-hidden="true" size={15} strokeWidth={2.2} />
+        {EMOJI_CHOICES.map((emoji) => (
+          <button
+            key={emoji}
+            type="button"
+            className="emoji-button"
+            aria-label={`Insert ${emoji}`}
+            disabled={!editor}
+            title={`Insert ${emoji}`}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => insertEmoji(emoji)}
+          >
+            {emoji}
+          </button>
+        ))}
       </div>
 
       <div className="toolbar-group toolbar-group-push" aria-label="Draft actions">
@@ -127,7 +208,7 @@ export function Toolbar({ editor, onReset }: ToolbarProps) {
 
 function ToolButton({ label, shortcut, icon: Icon, active, disabled, onClick }: ToolButtonProps) {
   const title = shortcut ? `${label} (${shortcut})` : label;
-  const buttonContent = <Icon aria-hidden="true" size={18} strokeWidth={2.2} />;
+  const buttonContent = <Icon aria-hidden="true" size={15} strokeWidth={2.2} />;
 
   if (active === true) {
     return (
