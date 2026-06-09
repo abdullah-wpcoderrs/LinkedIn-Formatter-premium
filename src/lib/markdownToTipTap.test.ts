@@ -77,4 +77,20 @@ describe('markdownToTipTap', () => {
       ],
     });
   });
+
+  it('converts fenced code blocks without keeping fence markers', () => {
+    expect(markdownToTipTap('```bash\nnpm run build\nnpm test\n```')).toEqual({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'npm run build', marks: [{ type: 'code' }] },
+            { type: 'hardBreak' },
+            { type: 'text', text: 'npm test', marks: [{ type: 'code' }] },
+          ],
+        },
+      ],
+    });
+  });
 });

@@ -70,8 +70,9 @@ function renderBlock(node: EditorNode): string {
     case 'doc':
       return renderBlocks(node.content ?? []);
     case 'paragraph':
-    case 'heading':
       return renderInline(node.content ?? []);
+    case 'heading':
+      return renderInline(node.content ?? [], [{ type: 'bold' }]);
     case 'blockquote':
       return renderBlockquote(node);
     case 'horizontalRule':
@@ -91,25 +92,25 @@ function renderBlock(node: EditorNode): string {
   }
 }
 
-function renderInline(nodes: EditorNode[]): string {
-  return nodes.map((node) => renderInlineNode(node)).join('');
+function renderInline(nodes: EditorNode[], inheritedMarks: EditorMark[] = []): string {
+  return nodes.map((node) => renderInlineNode(node, inheritedMarks)).join('');
 }
 
-function renderInlineNode(node: EditorNode): string {
+function renderInlineNode(node: EditorNode, inheritedMarks: EditorMark[]): string {
   if (node.type === 'text') {
-    return renderTextNode(node);
+    return renderTextNode(node, inheritedMarks);
   }
 
   if (node.type === 'hardBreak') {
     return '\n';
   }
 
-  return node.content ? renderInline(node.content) : '';
+  return node.content ? renderInline(node.content, inheritedMarks) : '';
 }
 
-function renderTextNode(node: EditorNode): string {
+function renderTextNode(node: EditorNode, inheritedMarks: EditorMark[] = []): string {
   const text = node.text ?? '';
-  const marks = node.marks ?? [];
+  const marks = [...inheritedMarks, ...(node.marks ?? [])];
   const href = getLinkHref(marks);
   const styledText = styleText(text, getStyleOptions(marks));
 

@@ -1,6 +1,7 @@
 import type { EditorMark, EditorNode } from './exportLinkedInText';
 
 const HORIZONTAL_RULE_PATTERN = /^\s{0,3}([-*_])(?:\s*\1){2,}\s*$/;
+const FENCED_CODE_PATTERN = /^\s{0,3}```/;
 const HEADING_PATTERN = /^\s{0,3}(#{1,6})\s+(.+)$/;
 const BULLET_PATTERN = /^\s*[-+*]\s+(.+)$/;
 const ORDERED_PATTERN = /^\s*(\d+)\.\s+(.+)$/;
@@ -26,6 +27,23 @@ export function markdownToTipTap(markdown: string): EditorNode {
     if (HORIZONTAL_RULE_PATTERN.test(line)) {
       content.push({ type: 'horizontalRule' });
       index += 1;
+      continue;
+    }
+
+    if (FENCED_CODE_PATTERN.test(line)) {
+      const codeLines: string[] = [];
+      index += 1;
+
+      while (index < lines.length && !FENCED_CODE_PATTERN.test(lines[index])) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+
+      if (index < lines.length) {
+        index += 1;
+      }
+
+      content.push(codeParagraph(codeLines));
       continue;
     }
 
@@ -113,7 +131,7 @@ export function markdownToTipTap(markdown: string): EditorNode {
 }
 
 function isBlockStart(line: string): boolean {
-  return HORIZONTAL_RULE_PATTERN.test(line) || HEADING_PATTERN.test(line) || BULLET_PATTERN.test(line) || ORDERED_PATTERN.test(line) || BLOCKQUOTE_PATTERN.test(line);
+  return HORIZONTAL_RULE_PATTERN.test(line) || FENCED_CODE_PATTERN.test(line) || HEADING_PATTERN.test(line) || BULLET_PATTERN.test(line) || ORDERED_PATTERN.test(line) || BLOCKQUOTE_PATTERN.test(line);
 }
 
 function listItem(text: string): EditorNode {
@@ -126,6 +144,15 @@ function paragraph(text: string): EditorNode {
 
 function heading(text: string, depth: number): EditorNode {
   return { type: 'heading', attrs: { level: Math.min(depth + 1, 3) }, content: parseInlineMarks(text) };
+}
+
+function codeParagraph(lines: string[]): EditorNode {
+  const content = lines.flatMap((line, index): EditorNode[] => {
+    const nodes: EditorNode[] = index === 0 ? [] : [{ type: 'hardBreak' }];
+    return [...nodes, textNode(line, [{ type: 'code' }])];
+  });
+
+  return { type: 'paragraph', content: content.length ? content : [textNode('', [{ type: 'code' }])] };
 }
 
 function parseInlineMarks(text: string): EditorNode[] {

@@ -19,7 +19,7 @@ This is not an official LinkedIn app and does not post to LinkedIn directly. All
 - Links export as readable label plus URL, for example `Read more (https://example.com)`.
 - Hashtags and mentions remain plain text so LinkedIn has the best chance to recognize them.
 - Searchable emoji picker with emoji-safe export behavior.
-- Pasted Markdown converts to formatted draft text for common inline marks, links, headings, lists, blockquotes, and dividers.
+- Pasted Markdown converts to formatted draft text for common inline marks, links, headings, fenced code, lists, blockquotes, and dividers.
 - Live character counter plus desktop/mobile LinkedIn-style feed preview with estimated "see more" cutoff.
 - One-click copy with a fallback for browsers that block the Clipboard API.
 - Local draft autosave, reset/recovery behavior, and saved drafts.

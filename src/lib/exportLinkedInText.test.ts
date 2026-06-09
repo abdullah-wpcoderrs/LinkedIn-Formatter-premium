@@ -47,6 +47,12 @@ describe('exportLinkedInText', () => {
     );
   });
 
+  it('exports headings as bold LinkedIn-friendly Unicode', () => {
+    const document = doc([{ type: 'heading', attrs: { level: 2 }, content: [text('Launch notes')] }]);
+
+    expect(exportLinkedInText(document)).toBe(styleText('Launch notes', { bold: true }));
+  });
+
   it('exports underline as combining underline text', () => {
     const document = doc([paragraph([text('Underlined', [{ type: 'underline' }])])]);
 
