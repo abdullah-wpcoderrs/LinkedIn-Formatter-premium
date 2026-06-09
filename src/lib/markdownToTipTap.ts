@@ -1,12 +1,13 @@
 import type { EditorMark, EditorNode } from './exportLinkedInText';
 
 const HORIZONTAL_RULE_PATTERN = /^\s{0,3}([-*_])(?:\s*\1){2,}\s*$/;
+const HEADING_PATTERN = /^\s{0,3}(#{1,6})\s+(.+)$/;
 const BULLET_PATTERN = /^\s*[-+*]\s+(.+)$/;
 const ORDERED_PATTERN = /^\s*(\d+)\.\s+(.+)$/;
 const BLOCKQUOTE_PATTERN = /^\s*>\s?(.*)$/;
 
 export function looksLikeMarkdown(text: string): boolean {
-  return /(^\s{0,3}([-+*]|\d+\.|>)\s+|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|~~[^~]+~~|__[^_]+__|^\s{0,3}[-*_]{3,}\s*$)/m.test(text);
+  return /(^\s{0,3}(#{1,6}|[-+*]|\d+\.|>)\s+|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|~~[^~]+~~|__[^_]+__|^\s{0,3}[-*_]{3,}\s*$)/m.test(text);
 }
 
 export function markdownToTipTap(markdown: string): EditorNode {
@@ -24,6 +25,14 @@ export function markdownToTipTap(markdown: string): EditorNode {
 
     if (HORIZONTAL_RULE_PATTERN.test(line)) {
       content.push({ type: 'horizontalRule' });
+      index += 1;
+      continue;
+    }
+
+    const headingMatch = line.match(HEADING_PATTERN);
+
+    if (headingMatch) {
+      content.push(heading(headingMatch[2], headingMatch[1].length));
       index += 1;
       continue;
     }
@@ -104,7 +113,7 @@ export function markdownToTipTap(markdown: string): EditorNode {
 }
 
 function isBlockStart(line: string): boolean {
-  return HORIZONTAL_RULE_PATTERN.test(line) || BULLET_PATTERN.test(line) || ORDERED_PATTERN.test(line) || BLOCKQUOTE_PATTERN.test(line);
+  return HORIZONTAL_RULE_PATTERN.test(line) || HEADING_PATTERN.test(line) || BULLET_PATTERN.test(line) || ORDERED_PATTERN.test(line) || BLOCKQUOTE_PATTERN.test(line);
 }
 
 function listItem(text: string): EditorNode {
@@ -113,6 +122,10 @@ function listItem(text: string): EditorNode {
 
 function paragraph(text: string): EditorNode {
   return { type: 'paragraph', content: parseInlineMarks(text) };
+}
+
+function heading(text: string, depth: number): EditorNode {
+  return { type: 'heading', attrs: { level: Math.min(depth + 1, 3) }, content: parseInlineMarks(text) };
 }
 
 function parseInlineMarks(text: string): EditorNode[] {

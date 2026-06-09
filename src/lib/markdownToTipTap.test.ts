@@ -5,6 +5,7 @@ import { looksLikeMarkdown, markdownToTipTap } from './markdownToTipTap';
 describe('looksLikeMarkdown', () => {
   it('detects common markdown markers', () => {
     expect(looksLikeMarkdown('A **bold** move')).toBe(true);
+    expect(looksLikeMarkdown('## Heading')).toBe(true);
     expect(looksLikeMarkdown('- item')).toBe(true);
     expect(looksLikeMarkdown('[link](example.com)')).toBe(true);
   });
@@ -63,6 +64,16 @@ describe('markdownToTipTap', () => {
           content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Quote' }] }],
         },
         { type: 'horizontalRule' },
+      ],
+    });
+  });
+
+  it('converts markdown headings', () => {
+    expect(markdownToTipTap('# Big idea\n\n### Detail')).toEqual({
+      type: 'doc',
+      content: [
+        { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Big idea' }] },
+        { type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Detail' }] },
       ],
     });
   });

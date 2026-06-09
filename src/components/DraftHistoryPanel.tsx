@@ -29,7 +29,7 @@ export function DraftHistoryPanel({ drafts, onDelete, onRestore, onSave }: Draft
       <summary>Saved drafts</summary>
       <div className="draft-history-actions">
         <label className="draft-title-field">
-          <span>Snapshot name</span>
+          <span>Draft name</span>
           <input
             type="text"
             value={title}
@@ -38,7 +38,7 @@ export function DraftHistoryPanel({ drafts, onDelete, onRestore, onSave }: Draft
           />
         </label>
         <button type="button" className="secondary-action" onClick={handleSave}>
-          Save snapshot
+          Save draft
         </button>
         <span>{drafts.length} / 10 saved</span>
       </div>
@@ -67,7 +67,7 @@ export function DraftHistoryPanel({ drafts, onDelete, onRestore, onSave }: Draft
           ))}
         </ul>
       ) : (
-        <p className="draft-empty">No saved snapshots yet.</p>
+        <p className="draft-empty">No saved drafts yet.</p>
       )}
     </details>
   );

@@ -2,6 +2,7 @@ import CharacterCount from '@tiptap/extension-character-count';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
+import { Slice } from '@tiptap/pm/model';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -76,7 +77,7 @@ export function EditorShell({
 
         const parsedDocument = markdownToTipTap(plainText);
         const schemaNode = view.state.schema.nodeFromJSON(parsedDocument);
-        const transaction = view.state.tr.replaceSelectionWith(schemaNode, false).scrollIntoView();
+        const transaction = view.state.tr.replaceSelection(new Slice(schemaNode.content, 0, 0)).scrollIntoView();
         view.dispatch(transaction);
         return true;
       },
@@ -120,8 +121,16 @@ interface PreviewModeButtonProps {
 }
 
 function PreviewModeButton({ active, label, onClick }: PreviewModeButtonProps) {
+  if (active) {
+    return (
+      <button type="button" className="preview-toggle is-active" aria-pressed="true" onClick={onClick}>
+        {label}
+      </button>
+    );
+  }
+
   return (
-    <button type="button" className={`preview-toggle${active ? ' is-active' : ''}`} aria-pressed={active} onClick={onClick}>
+    <button type="button" className="preview-toggle" aria-pressed="false" onClick={onClick}>
       {label}
     </button>
   );
