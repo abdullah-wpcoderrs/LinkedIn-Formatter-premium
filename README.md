@@ -20,7 +20,7 @@ This is not an official LinkedIn app and does not post to LinkedIn directly. All
 - Hashtags and mentions remain plain text so LinkedIn has the best chance to recognize them.
 - Searchable emoji picker with emoji-safe export behavior.
 - Pasted Markdown converts to formatted draft text for common inline marks, links, headings, fenced code, lists, blockquotes, and dividers.
-- Live character counter plus desktop/mobile LinkedIn-style feed preview with estimated "see more" cutoff.
+- Live character counter plus desktop/mobile LinkedIn-style feed preview with an estimated "more" cutoff toggle.
 - One-click copy with a fallback for browsers that block the Clipboard API.
 - Local draft autosave, reset/recovery behavior, and saved drafts.
 - GitHub Actions workflow for GitHub Pages deployment.
@@ -62,7 +62,7 @@ LinkedIn feed posts are plain text. LinkedIn itself does not reliably preserve p
 
 The character counter is based on the exported clipboard text and uses a 3,000-character feed post limit. LinkedIn can change limits or count edge-case Unicode differently, so paste into LinkedIn before publishing high-stakes posts.
 
-The desktop/mobile feed previews are client-side visual simulations. LinkedIn does not provide a public browser-only API for showing a real logged-in feedcard preview without posting, and the static GitHub Pages app cannot authenticate to LinkedIn or call LinkedIn APIs directly.
+The desktop/mobile feed previews are client-side visual simulations. Public preview tools and guidance describe LinkedIn's collapsed feed cutoff as line-based rather than a fixed character count: about three visible lines, roughly 210 characters in a desktop-width feed column and 140 in a mobile-width column depending on line breaks, glyph widths, emojis, and user font settings. The More cutoff toggle uses those thresholds as an estimate. LinkedIn does not provide a public browser-only API for showing a real logged-in feedcard preview without posting, and the static GitHub Pages app cannot authenticate to LinkedIn or call LinkedIn APIs directly.
 
 ## License
 

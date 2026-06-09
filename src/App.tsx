@@ -20,6 +20,7 @@ function App() {
   const [editorVersion, setEditorVersion] = useState(0);
   const [draftHistory, setDraftHistory] = useState<DraftSnapshot[]>(loadDraftHistory);
   const [feedPreviewMode, setFeedPreviewMode] = useState<FeedPreviewMode | null>(null);
+  const [showFeedCutoff, setShowFeedCutoff] = useState(false);
   const [storageNotice, setStorageNotice] = useState<string | null>(() => initialLoad.error ?? null);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>({ state: 'idle', message: '' });
 
@@ -68,6 +69,11 @@ function App() {
     setEditorVersion((version) => version + 1);
     setStorageNotice(null);
     setCopyStatus({ state: 'idle', message: '' });
+  }
+
+  function handleFeedPreviewModeChange(mode: FeedPreviewMode | null) {
+    setFeedPreviewMode(mode);
+    setShowFeedCutoff(mode !== null);
   }
 
   function handleSaveDraftSnapshot(title: string) {
@@ -140,9 +146,12 @@ function App() {
             <LinkedInPreview summary={characterSummary} />
             <EditorShell
               key={editorVersion}
+              exportedText={exportedText}
               feedPreviewMode={feedPreviewMode}
               initialContent={document}
-              onFeedPreviewModeChange={setFeedPreviewMode}
+              showFeedCutoff={showFeedCutoff}
+              onFeedCutoffChange={setShowFeedCutoff}
+              onFeedPreviewModeChange={handleFeedPreviewModeChange}
               onDocumentChange={handleDocumentChange}
               onReset={handleReset}
             />

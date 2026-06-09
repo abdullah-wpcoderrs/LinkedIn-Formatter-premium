@@ -369,6 +369,39 @@ h2 {
   outline: none;
 }
 
+.preview-toggle:disabled {
+  cursor: not-allowed;
+  border-color: var(--line);
+  color: #b4bfcc;
+  background: #f8fafc;
+}
+
+.more-preview-toggle {
+  min-height: 26px;
+  border-color: rgba(10, 102, 194, 0.22);
+  border-radius: 999px;
+  padding: 0 10px;
+  color: var(--muted);
+  background: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.more-preview-toggle:hover,
+.more-preview-toggle:focus-visible,
+.more-preview-toggle.is-active {
+  border-color: rgba(10, 102, 194, 0.42);
+  color: var(--linkedin-blue-dark);
+  background: #eef6ff;
+  text-decoration: none;
+}
+
+.more-preview-toggle:disabled {
+  border-color: var(--line);
+  background: #f8fafc;
+  color: #b4bfcc;
+}
+
 .editor-frame.is-feed-preview {
   padding: 14px 20px 20px;
   background: #f4f6f8;
@@ -426,6 +459,42 @@ h2 {
 .feed-meta {
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+.feed-cutoff-preview {
+  position: relative;
+  overflow: hidden;
+  min-height: 4.3em;
+  color: #191919;
+  font-size: 0.92rem;
+  line-height: 1.42;
+}
+
+.feed-cutoff-text {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+}
+
+.feed-cutoff-preview:not(.is-truncated) .feed-cutoff-text {
+  display: block;
+}
+
+.feed-cutoff-preview.is-truncated .feed-cutoff-text {
+  -webkit-line-clamp: 3;
+}
+
+.feed-see-more {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding-left: 28px;
+  color: #666;
+  font-weight: 700;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 22px);
 }
 
 .feed-editor-card .rich-editor-content {

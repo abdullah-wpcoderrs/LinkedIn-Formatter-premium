@@ -9,12 +9,15 @@ import StarterKit from '@tiptap/starter-kit';
 import { LINKEDIN_POST_CHARACTER_LIMIT } from '../lib/constants';
 import type { EditorNode } from '../lib/exportLinkedInText';
 import { looksLikeMarkdown, markdownToTipTap } from '../lib/markdownToTipTap';
-import type { FeedPreviewMode } from '../lib/feedPreview';
+import { isFeedCutoffLikely, type FeedPreviewMode } from '../lib/feedPreview';
 import { Toolbar } from './Toolbar';
 
 interface EditorShellProps {
+  exportedText: string;
   feedPreviewMode: FeedPreviewMode | null;
   initialContent: EditorNode;
+  showFeedCutoff: boolean;
+  onFeedCutoffChange: (showFeedCutoff: boolean) => void;
   onFeedPreviewModeChange: (mode: FeedPreviewMode | null) => void;
   onDocumentChange: (document: EditorNode) => void;
   onReset: () => void;
@@ -47,8 +50,11 @@ const extensions = [
 ];
 
 export function EditorShell({
+  exportedText,
   feedPreviewMode,
   initialContent,
+  showFeedCutoff,
+  onFeedCutoffChange,
   onDocumentChange,
   onFeedPreviewModeChange,
   onReset,
@@ -99,12 +105,19 @@ export function EditorShell({
         <PreviewModeButton active={feedPreviewMode === null} label="Editor" onClick={() => onFeedPreviewModeChange(null)} />
         <PreviewModeButton active={feedPreviewMode === 'desktop'} label="Desktop" onClick={() => onFeedPreviewModeChange('desktop')} />
         <PreviewModeButton active={feedPreviewMode === 'mobile'} label="Mobile" onClick={() => onFeedPreviewModeChange('mobile')} />
+        <PreviewModeButton
+          active={Boolean(feedPreviewMode && showFeedCutoff)}
+          className="more-preview-toggle"
+          disabled={!feedPreviewMode}
+          label="...more"
+          onClick={() => onFeedCutoffChange(!showFeedCutoff)}
+        />
       </div>
       <div className={`editor-frame${feedPreviewMode ? ` is-feed-preview is-${feedPreviewMode}` : ''}`}>
         {feedPreviewMode ? (
           <div className="feed-editor-card">
             <FeedEditorHeader />
-            <EditorContent editor={editor} />
+            {showFeedCutoff ? <FeedCutoffPreview mode={feedPreviewMode} text={exportedText} /> : <EditorContent editor={editor} />}
           </div>
         ) : (
           <EditorContent editor={editor} />
@@ -116,23 +129,46 @@ export function EditorShell({
 
 interface PreviewModeButtonProps {
   active: boolean;
+  className?: string;
+  disabled?: boolean;
   label: string;
   onClick: () => void;
 }
 
-function PreviewModeButton({ active, label, onClick }: PreviewModeButtonProps) {
+function PreviewModeButton({ active, className = '', disabled = false, label, onClick }: PreviewModeButtonProps) {
+  const buttonClassName = `preview-toggle${className ? ` ${className}` : ''}`;
+
   if (active) {
     return (
-      <button type="button" className="preview-toggle is-active" aria-pressed="true" onClick={onClick}>
+      <button type="button" className={`${buttonClassName} is-active`} aria-pressed="true" disabled={disabled} onClick={onClick}>
         {label}
       </button>
     );
   }
 
   return (
-    <button type="button" className="preview-toggle" aria-pressed="false" onClick={onClick}>
+    <button type="button" className={buttonClassName} aria-pressed="false" disabled={disabled} onClick={onClick}>
       {label}
     </button>
+  );
+}
+
+interface FeedCutoffPreviewProps {
+  mode: FeedPreviewMode;
+  text: string;
+}
+
+function FeedCutoffPreview({ mode, text }: FeedCutoffPreviewProps) {
+  const hasText = Boolean(text.trim());
+  const isTruncated = isFeedCutoffLikely(text, mode);
+
+  return (
+    <div className={`feed-cutoff-preview is-${mode}${isTruncated ? ' is-truncated' : ''}`} aria-label="Estimated collapsed LinkedIn feed preview">
+      <p className="feed-cutoff-text">
+        {hasText ? text : 'Your LinkedIn-ready text will appear here.'}
+      </p>
+      {isTruncated ? <span className="feed-see-more" aria-hidden="true">...more</span> : null}
+    </div>
   );
 }
 

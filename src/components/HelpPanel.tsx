@@ -10,7 +10,8 @@ export function HelpPanel() {
         <li>Hashtags and @mentions stay plain so LinkedIn has the best chance to recognize them.</li>
         <li>Links export as readable text plus URL because custom pasted anchor text is not supported in posts.</li>
         <li>Pasted Markdown converts to formatted draft text for common inline styles, links, headings, fenced code, lists, blockquotes, and horizontal rules.</li>
-        <li>Desktop and mobile previews estimate LinkedIn's feed cutoff; logged-in real feedcard previews require LinkedIn APIs this static app cannot call.</li>
+        <li>The More cutoff toggle estimates LinkedIn's collapsed feed view at about three visible lines, roughly 210 desktop characters or 140 mobile characters depending on wrapping.</li>
+        <li>Logged-in real feedcard previews require LinkedIn APIs this static app cannot call.</li>
         <li>Saved drafts are local to this browser only.</li>
         <li>Strikethrough is experimental and may render differently across devices.</li>
         <li>LinkedIn controls the final post font after paste; this app cannot copy CSS fonts into a post.</li>
