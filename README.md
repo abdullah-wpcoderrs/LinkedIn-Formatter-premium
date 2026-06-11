@@ -19,7 +19,7 @@ This is not an official LinkedIn app. Drafts stay in your browser; the extension
 - Sans-serif Unicode bold, italic, bold italic, code, experimental underline, and experimental strikethrough export.
 - Nested bullet and numbered lists with LinkedIn-friendly non-breaking-space indentation.
 - Blockquotes exported as indented plain text, and horizontal dividers exported as plain divider lines.
-- Links export as readable label plus URL, for example `Read more (https://example.com)`.
+- Links export as readable label plus URL, for example `Read more (https://example.com)`. When posting through the extension, LinkedIn unfurls the first URL into its usual link preview card (an inline player for YouTube and other video links); the bridge waits briefly for the card to attach before clicking Post. Attached media suppresses link previews, matching LinkedIn's own behavior.
 - Hashtags remain plain text so LinkedIn has the best chance to recognize them.
 - Mentions: write `@[Name]` to tag people; posting through the extension resolves tokens into real LinkedIn mentions (see [Mentions](#mentions)).
 - Searchable emoji picker with emoji-safe export behavior.
@@ -66,7 +66,7 @@ The extension turns the LinkedIn composer into the formatter. Clicking **Start a
 
 - A content script (`src/extension/content-script.tsx`) runs on `linkedin.com`, mounts the formatter UI, and listens for clicks on LinkedIn's **Start a post** control.
 - LinkedIn renders its composer inside a **shadow root**, so the script pierces shadow boundaries to find the composer, suppress it (CSS `visibility:hidden` while you edit, so its focus trap cannot steal focus from the formatter), and drive it.
-- On **Post**, the script briefly makes the hidden composer focusable, hands any attached images/videos to LinkedIn's media upload input (confirming the media editor's **Next** step), inserts the exported text (resolving `@[Name]` mention tokens through the composer's mention typeahead), waits for LinkedIn's Post button to enable, clicks it, and confirms the composer closed.
+- On **Post**, the script briefly makes the hidden composer focusable, hands any attached images/videos to LinkedIn's media upload input (confirming the media editor's **Next** step), inserts the exported text (resolving `@[Name]` mention tokens through the composer's mention typeahead), waits for LinkedIn's link preview card when the text contains a URL, waits for LinkedIn's Post button to enable, clicks it, and confirms the composer closed.
 - A service worker (`src/extension/public/background.js`) re-injects the script if you click the toolbar icon on a LinkedIn tab.
 
 ### Mentions

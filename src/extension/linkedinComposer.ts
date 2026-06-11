@@ -140,6 +140,22 @@ export function dismissNativeComposerDiscardConfirmation(root: ParentNode = docu
   return true;
 }
 
+// A URL in the composer text makes LinkedIn fetch a link preview card (for
+// YouTube and other videos, an inline player) and attach it below the editor.
+// Its presence confirms the unfurl completed.
+export function findLinkedInLinkPreview(root: ParentNode = document): HTMLElement | null {
+  const dialog = findNativeComposerDialog(root);
+
+  if (!dialog) {
+    return null;
+  }
+
+  return queryAllDeep<HTMLElement>('[class*="preview-container"]', dialog).find((container) => {
+    const rect = container.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 && !container.closest(EXTENSION_ROOT_SELECTOR);
+  }) ?? null;
+}
+
 // Hides a dialog plus its overlay/backdrop parent so the user never sees a
 // flash of LinkedIn chrome while the extension drives it.
 export function hideDialogSurface(dialog: HTMLElement | null) {

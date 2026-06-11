@@ -24,6 +24,11 @@ export function HelpPanel() {
           LinkedIn's composer and pick the person from the dropdown.
         </li>
         <li>Links export as readable text plus URL because custom pasted anchor text is not supported in posts.</li>
+        <li>
+          When posting through the extension, LinkedIn expands the first URL into its usual link preview card (a
+          player for YouTube and other video links). Attached images or video suppress the preview, as on LinkedIn
+          itself.
+        </li>
         <li>Pasted Markdown converts to formatted draft text for common inline styles, links, headings, fenced code, lists, blockquotes, and horizontal rules.</li>
         <li>The More cutoff toggle estimates LinkedIn's collapsed feed view at about three visible lines, roughly 210 desktop characters or 140 mobile characters depending on wrapping.</li>
         <li>Logged-in real feedcard previews require LinkedIn APIs this static app cannot call.</li>

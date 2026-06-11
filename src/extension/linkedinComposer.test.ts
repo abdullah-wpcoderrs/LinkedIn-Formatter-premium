@@ -6,6 +6,7 @@ import {
   dismissNativeComposerDiscardConfirmation,
   findComposerMentionEntity,
   findLinkedInComposer,
+  findLinkedInLinkPreview,
   findLinkedInMediaAttachedIndicator,
   findLinkedInMediaFileInput,
   findLinkedInMediaNextButton,
@@ -373,6 +374,29 @@ describe('linkedinComposer helpers', () => {
     mockVisible(document.querySelector<HTMLElement>('#vjs-dialog')!);
 
     expect(findLinkedInMediaNextButton()).toBeNull();
+  });
+
+  it('detects the link preview card inside the composer dialog', () => {
+    document.body.innerHTML = `
+      <div role="dialog">
+        <div class="ql-editor" contenteditable="true" data-placeholder="What do you want to talk about?"></div>
+        <button type="button">Post</button>
+      </div>
+    `;
+    const editor = document.querySelector<HTMLElement>('.ql-editor');
+    mockVisible(editor!);
+
+    expect(findLinkedInLinkPreview()).toBeNull();
+
+    const preview = document.createElement('div');
+    preview.className = 'share-creation-state__preview-container';
+    document.querySelector('[role="dialog"]')!.append(preview);
+
+    expect(findLinkedInLinkPreview()).toBeNull();
+
+    mockVisible(preview);
+
+    expect(findLinkedInLinkPreview()).toBe(preview);
   });
 
   it('detects the inline media-attached indicator in the composer dialog', () => {

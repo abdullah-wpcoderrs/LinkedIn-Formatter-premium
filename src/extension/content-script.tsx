@@ -10,6 +10,7 @@ import {
   closeNativeLinkedInComposer,
   dismissNativeComposerDiscardConfirmation,
   findLinkedInComposer,
+  findLinkedInLinkPreview,
   findLinkedInMediaAttachedIndicator,
   findLinkedInMediaNextButton,
   findLinkedInPostButton,
@@ -48,6 +49,9 @@ const POSTED_DIALOG_CLOSE_TIMEOUT_MS = 8000;
 const MEDIA_ATTACH_TIMEOUT_MS = 60000;
 const MEDIA_POST_BUTTON_TIMEOUT_MS = 90000;
 const MEDIA_POSTED_DIALOG_CLOSE_TIMEOUT_MS = 30000;
+// LinkedIn unfurls a URL in the text into a link preview card asynchronously;
+// give it a moment to attach before Post so the card ships with the post.
+const LINK_PREVIEW_TIMEOUT_MS = 8000;
 const LOG_PREFIX = '[LIPF]';
 
 function log(...args: unknown[]) {
@@ -249,6 +253,13 @@ async function postThroughLinkedIn(text: string, files: File[]): Promise<boolean
       if (!wrote) {
         log('FAILED: could not write text');
         return false;
+      }
+
+      // Attached media suppresses link previews, so only wait when there is
+      // none. Best effort: not every URL unfurls, so a timeout just proceeds.
+      if (files.length === 0 && /https?:\/\//i.test(text)) {
+        const preview = await waitForElement(findLinkedInLinkPreview, LINK_PREVIEW_TIMEOUT_MS);
+        log('link preview attached:', Boolean(preview));
       }
     }
 
