@@ -17,6 +17,14 @@ describe('plainTextToDoc / docToPlainText', () => {
     expect(docToPlainText(plainTextToDoc(text))).toBe(text);
   });
 
+  it('keeps @[Name] mention tokens verbatim so the model can preserve them', () => {
+    const doc: EditorNode = {
+      type: 'doc',
+      content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Thanks @[Scott Hanselman] for the help.' }] }],
+    };
+    expect(docToPlainText(doc)).toBe('Thanks @[Scott Hanselman] for the help.');
+  });
+
   it('maps single newlines to hard breaks and a blank line to an empty paragraph', () => {
     const doc = plainTextToDoc('a\nb\n\nc');
     // para(a<br>b), empty paragraph (the blank line), para(c).

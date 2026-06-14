@@ -487,6 +487,8 @@ function App() {
               error={authorError}
               onSubmit={handleAuthor}
               onOpenSettings={() => setShowSettings(true)}
+              hasDraft={Boolean(docToPlainText(workspace.master).trim())}
+              stylePrompt={llmConfig.stylePrompt}
               sources={sources}
               onAddSource={handleAddSource}
               onUpdateSource={handleUpdateSource}

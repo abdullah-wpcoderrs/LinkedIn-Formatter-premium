@@ -363,6 +363,36 @@ h2 {
   font-size: 0.82rem;
 }
 
+/* One-click suggested prompts under the input — tinted to match the AI accent. */
+.ai-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ai-suggestion {
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  border-radius: 999px;
+  padding: 3px 10px;
+  color: #6d28d9;
+  background: rgba(124, 58, 237, 0.06);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-suggestion:hover:not(:disabled),
+.ai-suggestion:focus-visible {
+  background: rgba(124, 58, 237, 0.14);
+  outline: none;
+}
+
+.ai-suggestion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Reference sources live inside the AI box — sit flush, no top divider. */
 .ai-assist .sources-panel {
   margin: 10px 0 0;
@@ -545,6 +575,14 @@ h2 {
   height: 16px;
 }
 
+.field-row.toggle-row.is-disabled {
+  opacity: 0.5;
+}
+
+.field-row.toggle-row.is-disabled input {
+  cursor: not-allowed;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -612,8 +650,12 @@ h2 {
   border-color: rgba(10, 102, 194, 0.4);
 }
 
-.pane-editor-content {
-  min-height: 110px;
+/* The in-card editor sizes to its content and grows as you type, with a small
+   floor — rather than inheriting the main editor's tall fixed min-height/padding
+   (the extra .platform-card scope outranks .rich-editor-content). */
+.platform-card .pane-editor-content {
+  min-height: 48px;
+  padding: 0;
 }
 
 .platform-card .pane-editor-content:focus {

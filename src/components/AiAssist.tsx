@@ -3,6 +3,7 @@ import { AlertTriangle, Settings, Sparkles } from 'lucide-react';
 
 import { SourcesPanel } from './SourcesPanel';
 import type { Source } from '../lib/ai/sources';
+import { appendPrompt, loadPromptHistory, savePromptHistory } from '../lib/ai/promptHistory';
 
 interface AiAssistProps {
   ready: boolean;
@@ -10,6 +11,11 @@ interface AiAssistProps {
   error: string | null;
   onSubmit: (instruction: string) => void;
   onOpenSettings: () => void;
+  // Whether the master draft has content — quick "rewrite" prompts need something
+  // to act on, so they only show when there's a draft.
+  hasDraft: boolean;
+  // The configured style guidance, if any — enables the "apply style" suggestion.
+  stylePrompt: string;
   // Reference sources live inside the AI area.
   sources: Source[];
   onAddSource: (source: Source) => void;
@@ -17,12 +23,22 @@ interface AiAssistProps {
   onRemoveSource: (id: string) => void;
 }
 
-export function AiAssist({ ready, busy, error, onSubmit, onOpenSettings, sources, onAddSource, onUpdateSource, onRemoveSource }: AiAssistProps) {
+interface Suggestion {
+  label: string;
+  prompt: string;
+}
+
+export function AiAssist({ ready, busy, error, onSubmit, onOpenSettings, hasDraft, stylePrompt, sources, onAddSource, onUpdateSource, onRemoveSource }: AiAssistProps) {
   const [instruction, setInstruction] = useState('');
-  const [history, setHistory] = useState<string[]>([]);
+  // Seeded from storage so the ↑/↓ recall survives reloads, and persisted on change.
+  const [history, setHistory] = useState<string[]>(loadPromptHistory);
   // -1 means "live input"; otherwise an index into history.
   const [historyIndex, setHistoryIndex] = useState(-1);
   const prevBusy = useRef(busy);
+
+  useEffect(() => {
+    savePromptHistory(history);
+  }, [history]);
 
   // Clear the box once a generation finishes (busy goes true -> false).
   useEffect(() => {
@@ -33,17 +49,29 @@ export function AiAssist({ ready, busy, error, onSubmit, onOpenSettings, sources
     prevBusy.current = busy;
   }, [busy]);
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    const trimmed = instruction.trim();
+  const suggestions: Suggestion[] = [
+    { label: 'Rewrite for clarity', prompt: 'Rewrite this post for clarity.' },
+    { label: 'Make more concise', prompt: 'Make this post more concise.' },
+  ];
+  if (stylePrompt.trim()) {
+    suggestions.push({ label: 'Apply style', prompt: 'Rewrite this post to apply my style guidance.' });
+  }
+
+  function submitPrompt(text: string) {
+    const trimmed = text.trim();
 
     if (!trimmed || busy) {
       return;
     }
 
-    setHistory((prev) => (prev[prev.length - 1] === trimmed ? prev : [...prev, trimmed]));
+    setHistory((prev) => appendPrompt(prev, trimmed));
     setHistoryIndex(-1);
     onSubmit(trimmed);
+  }
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    submitPrompt(instruction);
   }
 
   // Up/Down walk previously submitted prompts (most recent first).
@@ -102,6 +130,15 @@ export function AiAssist({ ready, busy, error, onSubmit, onOpenSettings, sources
             {busy ? 'Working…' : 'Generate'}
           </button>
         </div>
+        {hasDraft ? (
+          <div className="ai-suggestions">
+            {suggestions.map((suggestion) => (
+              <button key={suggestion.label} type="button" className="ai-suggestion" disabled={busy} onClick={() => submitPrompt(suggestion.prompt)}>
+                {suggestion.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
         {error ? (
           <p className="ai-assist-error" role="status">
             <AlertTriangle aria-hidden="true" size={14} /> {error}

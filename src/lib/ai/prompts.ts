@@ -47,6 +47,7 @@ export function buildFitRequest(spec: PlatformSpec, masterText: string, style?: 
   return {
     system: withStyle(
       'You adapt a social media post for a specific platform. Preserve the author\'s voice, key message, hashtags, and @mentions. ' +
+        'Keep any @[Name] mention tokens exactly as written, including the square brackets and the name verbatim — never reword, restyle, or remove them. ' +
         'Tighten or restructure as needed so it fits the platform\'s limit. The length limit is a hard requirement. ' +
         'Return ONLY the adapted post text — no preamble, quotes, or explanation.',
       style,
@@ -82,7 +83,8 @@ export function buildAuthorRequest(instruction: string, currentText: string, sty
       'You help write social media posts. Return ONLY the post text — no preamble, quotes, options, or explanation. ' +
         'Keep it natural and ready to publish. You may use Markdown for light formatting: **bold**, *italic*, ' +
         'bullet lists with "- ", and links as [text](url). On platforms that support styling (e.g. LinkedIn) bold/italic ' +
-        'render as styled text; elsewhere they appear as plain text. Use formatting sparingly for emphasis.',
+        'render as styled text; elsewhere they appear as plain text. Use formatting sparingly for emphasis. ' +
+        'Preserve any @[Name] mention tokens exactly as written, including the square brackets and the name verbatim — never reword, restyle, or remove them.',
       style,
     ),
     prompt: hasDraft

@@ -55,6 +55,9 @@ export function LlmSettings({ config, onSave, onClose }: LlmSettingsProps) {
 
   // The test only needs endpoint/model/key — not the enabled flag.
   const canTest = isLlmReady({ ...draft, enabled: true });
+  // Auto-fit can only run when AI is enabled AND an endpoint/model/key is set, so
+  // the toggle is disabled otherwise.
+  const autofitAvailable = draft.enabled && canTest;
 
   return (
     <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="llm-settings-title" onMouseDown={onClose}>
@@ -68,7 +71,7 @@ export function LlmSettings({ config, onSave, onClose }: LlmSettingsProps) {
 
         <p className="modal-hint">
           Connect an LLM endpoint to help write posts and auto-fit them to each platform's limit. Your key is stored only in
-          this browser. Calls go directly from your browser to the endpoint, so it must allow browser (CORS) requests.
+          this browser.
         </p>
 
         <label className="field-row toggle-row">
@@ -113,8 +116,13 @@ export function LlmSettings({ config, onSave, onClose }: LlmSettingsProps) {
           />
         </label>
 
-        <label className="field-row toggle-row">
-          <input type="checkbox" checked={draft.autoFit} onChange={(event) => update({ autoFit: event.target.checked })} />
+        <label className={`field-row toggle-row${autofitAvailable ? '' : ' is-disabled'}`}>
+          <input
+            type="checkbox"
+            checked={draft.autoFit}
+            disabled={!autofitAvailable}
+            onChange={(event) => update({ autoFit: event.target.checked })}
+          />
           <span>Auto-fit over-limit platforms after a 3s typing pause</span>
         </label>
 

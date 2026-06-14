@@ -1,9 +1,10 @@
 import { type EditorNode, exportText } from '../exportText';
-import { flattenMentionTokens } from '../mentions';
 
-// Editor document -> plain text the LLM reads (no styled Unicode, mentions flattened).
+// Editor document -> plain text the LLM reads (no styled Unicode). Mention tokens
+// are kept verbatim as @[Name] (NOT flattened to @Name) so the model can preserve
+// them through a rewrite; the prompts instruct it to leave them exactly as written.
 export function docToPlainText(doc: EditorNode | null | undefined): string {
-  return flattenMentionTokens(exportText(doc, { unicodeStyling: false }));
+  return exportText(doc, { unicodeStyling: false });
 }
 
 // Plain text from the LLM -> a TipTap document. Single newlines within a run of
