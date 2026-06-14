@@ -52,7 +52,7 @@ export function MediaTray({ attachments, onAddAttachment, onRemoveAttachment }: 
 
       <div className="media-actions">
         <label className="secondary-action media-add media-file" title="Add an image">
-          <ImagePlus aria-hidden="true" size={13} /> Add image
+          <ImagePlus aria-hidden="true" size={13} /> Image
           <input type="file" accept="image/*" multiple onChange={handleFiles} />
         </label>
         <button type="button" className="secondary-action media-add" onClick={() => setShowLink((value) => !value)}>

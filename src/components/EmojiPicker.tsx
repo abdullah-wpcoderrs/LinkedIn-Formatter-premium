@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Smile } from 'lucide-react';
 
 import { searchEmojis } from '../lib/emojiData';
@@ -12,7 +12,35 @@ export function EmojiPicker({ disabled, onSelect }: EmojiPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const results = useMemo(() => searchEmojis(query), [query]);
+
+  // While open, dismiss the picker on Escape or a click/tap outside it.
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function onPointerDown(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isOpen]);
 
   function toggleMenu() {
     setIsOpen((nextIsOpen) => {
@@ -33,7 +61,7 @@ export function EmojiPicker({ disabled, onSelect }: EmojiPickerProps) {
   }
 
   return (
-    <div className="emoji-menu">
+    <div className="emoji-menu" ref={menuRef}>
       <button
         type="button"
         className="tool-button emoji-menu-button"

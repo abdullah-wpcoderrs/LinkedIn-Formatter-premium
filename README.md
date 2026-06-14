@@ -1,6 +1,6 @@
 # Polypost
 
-Draft a post once and format it for every platform at the same time. The main editor uses TipTap for word-processor-style editing, and a live preview rail shows your post on **LinkedIn, X, Bluesky, Threads, Facebook, and Instagram**, each with its own character limit, counting rule, and formatting applied.
+Draft a post once and format it for every platform at the same time. The main editor uses TipTap for word-processor-style editing, and a live preview rail shows your post on **LinkedIn, X, Bluesky, Threads, Mastodon, Facebook, and Instagram**, each with its own character limit, counting rule, and formatting applied.
 
 It ships in two forms:
 
@@ -17,19 +17,19 @@ This is not an official app of any platform. Drafts stay in your browser; the ex
 
 - **Write once, preview everywhere.** Type in the main editor and toggle the platforms you care about with the chips; each enabled platform shows a live preview card with its character count and any warnings.
 - **Tailor per platform.** Edit inside a card to *fork* a platform-specific version (it gets a Customized badge), and re-sync to the main draft any time. Newlines map 1:1 like LinkedIn's composer — Enter for a new line, again for a blank line.
-- **Copy or open.** Use **Copy** for platform-ready text, or **Copy & open** to launch that platform's composer pre-filled (X, Bluesky, Threads).
+- **Copy or open.** Use **Copy** for platform-ready text, or **Copy & open** to launch that platform's composer pre-filled (X, Bluesky, Threads, Mastodon).
 - **Mention people.** Write `@[Name]` — it shows as `@Scott Hanselman` on LinkedIn (where the extension resolves it into a real, clickable mention) and collapses to a single handle-style token like `@ScottHanselman` on X, Bluesky, Threads, and Mastodon, so their autocomplete fires on the whole name (and can match a handle) instead of splitting it at the space.
 - **Add media & links once.** Use the **Images & links** tray to reuse an image or link across platforms: links fold into each platform's text and count, and an image can be copied to the clipboard to paste into LinkedIn (or downloaded / dragged into any composer).
 - **Optional AI.** Connect your own LLM key (Anthropic Claude, Google Gemini, or any OpenAI-compatible endpoint) to write, adapt, and auto-fit posts — with documents or URLs as reference context. Your key stays in your browser.
 
 ## Features
 
-- **Live multi-platform previews** with each platform's character limit, counting rule, formatting, and warnings — LinkedIn, X, Bluesky, Threads, Facebook, and Instagram.
+- **Live multi-platform previews** with each platform's character limit, counting rule, formatting, and warnings — LinkedIn, X, Bluesky, Threads, Mastodon, Facebook, and Instagram.
 - **Fork-on-edit** per platform with one-click re-sync, plus local autosave and saved drafts.
-- **`@[Name]` mentions**, resolved into real LinkedIn mentions when posting through the extension.
+- **`@[Name]` mentions**, highlighted in the editor and previews — kept spaced for LinkedIn (where the extension resolves them into real, clickable mentions) and collapsed to a single handle-style token elsewhere.
 - **Shared images & links** — add once, reuse everywhere; *Copy image* pastes a picture straight into LinkedIn.
-- **Optional, bring-your-own-key AI** — write, adapt a single platform, auto-fit over-limit posts, and feed in reference sources (files, URLs, or pasted text).
-- **Rich-text editing** — Markdown and Word paste, file import, emoji, lists, and links, with LinkedIn-style Unicode styling where it helps.
+- **Optional, bring-your-own-key AI** — write, adapt a single platform, auto-fit over-limit posts, and feed in reference sources (files, URLs, or pasted text), with a multiline prompt box and remembered prompt history.
+- **Rich-text editing** — Markdown and Word paste, file import, a searchable emoji picker, lists, and links, with LinkedIn-style Unicode styling where it helps.
 - **Private by default** — drafts, settings, and API keys stay in your browser; nothing leaves it except the AI endpoint you choose to configure.
 
 ## Local Development
