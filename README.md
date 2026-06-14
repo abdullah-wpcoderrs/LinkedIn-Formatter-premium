@@ -2,8 +2,6 @@
 
 Draft a post once and format it for every platform at the same time. The main editor uses TipTap for word-processor-style editing, and a live preview rail shows your post on **LinkedIn, X, Bluesky, Threads, Facebook, and Instagram**, each with its own character limit, counting rule, and formatting applied.
 
-**Using it:** write in the main editor and toggle the platforms you care about with the chips. Each enabled platform shows a live preview card with its character count; edit inside a card to *fork* a platform-specific version (it gets a Customized badge), and re-sync to the main draft any time. Use **Copy** for platform-ready text, or **Copy & open** to launch that platform's composer pre-filled (X, Bluesky, Threads). Tag people by writing `@[Name]` — previews and copied text show it as `@Name`, and the LinkedIn extension resolves it into a real, clickable mention (pasted text can't become a mention, so retype it in the composer to pick the person if you're not posting through the extension). Add an image or link once in the **Images & links** tray to reuse everywhere: links fold into each platform's text and count, and an image can be copied to the clipboard to paste into LinkedIn (or downloaded / dragged into any composer). Optionally connect your own LLM key (Anthropic Claude, Google Gemini, or any OpenAI-compatible endpoint) to write, adapt, and auto-fit posts — with documents or URLs as reference context — and your key stays in your browser.
-
 It ships in two forms:
 
 - **Web app** — the multi-platform editor. Live at https://markrussinovich.github.io/Polypost/
@@ -14,6 +12,15 @@ It ships in two forms:
 </p>
 
 This is not an official app of any platform. Drafts stay in your browser; the extension only acts on LinkedIn when you click Post.
+
+## Using it
+
+- **Write once, preview everywhere.** Type in the main editor and toggle the platforms you care about with the chips; each enabled platform shows a live preview card with its character count and any warnings.
+- **Tailor per platform.** Edit inside a card to *fork* a platform-specific version (it gets a Customized badge), and re-sync to the main draft any time. Newlines map 1:1 like LinkedIn's composer — Enter for a new line, again for a blank line.
+- **Copy or open.** Use **Copy** for platform-ready text, or **Copy & open** to launch that platform's composer pre-filled (X, Bluesky, Threads).
+- **Mention people.** Write `@[Name]` — previews and copied text show it as `@Name`, and the LinkedIn extension resolves it into a real, clickable mention (otherwise retype it in the composer to pick the person).
+- **Add media & links once.** Use the **Images & links** tray to reuse an image or link across platforms: links fold into each platform's text and count, and an image can be copied to the clipboard to paste into LinkedIn (or downloaded / dragged into any composer).
+- **Optional AI.** Connect your own LLM key (Anthropic Claude, Google Gemini, or any OpenAI-compatible endpoint) to write, adapt, and auto-fit posts — with documents or URLs as reference context. Your key stays in your browser.
 
 ## Features
 
