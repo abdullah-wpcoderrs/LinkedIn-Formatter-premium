@@ -1,9 +1,10 @@
 import type { LinkPreview } from './media';
+import { URL_PATTERN } from './unicodeStyles';
 
 // Fetches a link's unfurl metadata (Open Graph) so the per-platform preview cards
 // can show the graphic + title/description each platform would render. A direct
-// browser fetch of an arbitrary page is CORS-blocked for nearly all sites (see
-// makeUrlSource in ai/sources.ts), so we use microlink — a CORS-enabled service
+// browser fetch of an arbitrary page is CORS-blocked for nearly all sites, so we
+// use microlink — a CORS-enabled service
 // that returns normalized metadata as JSON. The free endpoint needs no API key
 // but is rate-limited (~50 req/day per IP); results are cached on the attachment
 // and a manual override is available, so real usage stays well within that.
@@ -56,6 +57,41 @@ export function shouldRefreshLinkPreview(preview: LinkPreview | undefined, url: 
   }
 
   return !preview.imageUrl || isLowValueTitle(preview.title, url);
+}
+
+export function urlsInText(text: string): string[] {
+  return [...text.matchAll(new RegExp(URL_PATTERN.source, 'gu'))]
+    .map((match) => normalizeTextUrl(match[0]))
+    .filter((url) => url.length > 0);
+}
+
+export function lastUrlInText(text: string): string | undefined {
+  return urlsInText(text).at(-1);
+}
+
+function normalizeTextUrl(url: string): string {
+  let normalized = url.replace(/[.,!?;:]+$/u, '');
+
+  while (hasUnmatchedClosingDelimiter(normalized)) {
+    normalized = normalized.slice(0, -1);
+  }
+
+  return normalized;
+}
+
+function hasUnmatchedClosingDelimiter(url: string): boolean {
+  const last = url.at(-1);
+
+  if (!last || !')]}'.includes(last)) {
+    return false;
+  }
+
+  const opener = last === ')' ? '(' : last === ']' ? '[' : '{';
+  return countChar(url, last) > countChar(url, opener);
+}
+
+function countChar(text: string, character: string): number {
+  return [...text].filter((item) => item === character).length;
 }
 
 function isLowValueTitle(title: string | undefined, url: string): boolean {

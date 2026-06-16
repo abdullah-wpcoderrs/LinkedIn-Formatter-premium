@@ -34,9 +34,8 @@ export function HelpContent() {
           </li>
           <li>Ask the AI to write or improve the main draft from the bar above the editor.</li>
           <li>
-            Give the AI material to use as its context with "Reference sources for AI": add a .txt/.md/.docx file, a
-            URL, or pasted text. Sources are context only — they're never posted. If a URL can't be fetched (many sites
-            block it), paste the page text into the prompt the card shows.
+            Give the AI material to use as its context with \"Reference sources for AI\": add a .txt/.md/.docx file or
+            pasted text. Sources are context only — they're never posted.
           </li>
           <li>Use "Adapt with AI" on a card to rewrite the post for that platform on demand.</li>
           <li>
@@ -70,26 +69,20 @@ export function HelpContent() {
       </section>
 
       <section className="help-section">
-        <h3>Images &amp; links</h3>
+        <h3>Image &amp; URL previews</h3>
         <ul className="help-list">
           <li>
-            Add one image or one link in "Images &amp; links" below the editor and reuse it everywhere — no need to
-            re-add it per platform. Adding a new one replaces the current attachment, matching LinkedIn's composer.
+            Add one image below the editor when the post should include media. The image is session-only, replaces any
+            previous image, and can be copied to your clipboard for pasting into a composer.
           </li>
           <li>
-            Link URLs fold into each card's text and count against that platform's limit (on X each counts as 23), so
-            Copy and Copy &amp; open include them automatically. Links are saved to this browser.
+            Add URLs directly in the editor or in a platform-specific edit. The URL stays in that platform's text and
+            counts against its limit (on X each URL counts as 23).
           </li>
           <li>
-            Each card shows how that platform will unfurl the link — the image and title/description it would display
-            (Instagram, which doesn't unfurl, says so). Preview details are fetched once and cached; use the pencil on a
-            link to edit the title, description, or image, or to re-fetch.
-          </li>
-          <li>
-            For an image, use <strong>Copy image</strong> to put the picture on your clipboard and paste it straight into
-            the LinkedIn composer, or download / drag the file into any other composer. Images are kept for this session
-            only. (Videos can't be copied by a web page, so they're not included — post video through the LinkedIn
-            extension, which attaches it for you.)
+            When an image is selected, preview cards show that image instead of URL unfurls. Otherwise, platforms that
+            support URL previews show the unfurl preview for the last URL in that platform's rendered text after a short
+            typing pause.
           </li>
         </ul>
       </section>
@@ -124,7 +117,7 @@ export function HelpContent() {
             copy-only or open to the site, since they don't accept pre-filled caption text.
           </li>
           <li>
-            When posting through the extension, LinkedIn expands the first URL into its usual link preview card. Attached
+            When posting through the extension, LinkedIn expands the last URL into its usual link preview card. Attached
             images or video suppress the preview, as on LinkedIn itself.
           </li>
         </ul>

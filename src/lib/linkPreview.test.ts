@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { fetchLinkPreview, mapMicrolink, shouldRefreshLinkPreview } from './linkPreview';
+import { fetchLinkPreview, lastUrlInText, mapMicrolink, shouldRefreshLinkPreview, urlsInText } from './linkPreview';
 
 describe('mapMicrolink', () => {
   it('maps a successful payload into a ready preview', () => {
@@ -98,5 +98,22 @@ describe('shouldRefreshLinkPreview', () => {
     expect(shouldRefreshLinkPreview({ status: 'manual' }, 'https://example.test/post')).toBe(false);
     expect(shouldRefreshLinkPreview({ status: 'loading' }, 'https://example.test/post')).toBe(false);
     expect(shouldRefreshLinkPreview({ status: 'ready', title: 'Headline', imageUrl: 'https://cdn.test/og.jpg' }, 'https://example.test/post')).toBe(false);
+  });
+});
+
+describe('URL extraction from text', () => {
+  it('finds URLs in order and trims trailing sentence punctuation', () => {
+    expect(urlsInText('See https://first.test/a, then https://second.test/post.')).toEqual([
+      'https://first.test/a',
+      'https://second.test/post',
+    ]);
+  });
+
+  it('returns the last URL because platforms generally unfurl one card', () => {
+    expect(lastUrlInText('Start https://first.test end https://second.test/post')).toBe('https://second.test/post');
+  });
+
+  it('drops unmatched closing delimiters around a URL', () => {
+    expect(lastUrlInText('Read (https://example.test/post).')).toBe('https://example.test/post');
   });
 });

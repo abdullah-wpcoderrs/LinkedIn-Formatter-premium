@@ -1,58 +1,63 @@
 import { useState } from 'react';
-import { AlertTriangle } from 'lucide-react';
 
-import { faviconUrl, hostnameOf, type Attachment } from '../lib/media';
+import { faviconUrl, hostnameOf, type Attachment, type LinkPreview } from '../lib/media';
 import type { PlatformSpec } from '../lib/platforms/types';
 import { PLATFORM_ICONS } from './platformIcons';
 
 interface CardLinkPreviewProps {
-  link: Attachment;
+  url: string;
+  preview?: LinkPreview;
   spec: PlatformSpec;
 }
 
-// Renders the shared link as the unfurl card this platform would show — mirroring
+interface CardImagePreviewProps {
+  image: Attachment;
+  spec: PlatformSpec;
+}
+
+// Renders a detected URL as the unfurl card this platform would show — mirroring
 // each platform's real layout (large hero vs compact thumbnail, with/without the
-// description). Instagram gets a "no preview" note. Purely illustrative: it does
-// not affect the copied text or character count.
-export function CardLinkPreview({ link, spec }: CardLinkPreviewProps) {
+// description). Purely illustrative: it does not affect the copied text or
+// character count.
+export function CardLinkPreview({ url, preview, spec }: CardLinkPreviewProps) {
   const style = spec.linkPreview;
 
-  if (!style || !link.url) {
+  if (!style || !url) {
     return null;
   }
 
-  if (!style.show) {
-    return (
-      <div className="card-link-preview is-note" aria-label={`${spec.label} link preview`}>
-        <AlertTriangle aria-hidden="true" size={14} />
-        <span>{style.note}</span>
-      </div>
-    );
+  return <LinkCard url={url} preview={preview} spec={spec} showDescription={style.showDescription} layout={style.layout} />;
+}
+
+export function CardImagePreview({ image, spec }: CardImagePreviewProps) {
+  if (image.kind !== 'image' || !image.objectUrl) {
+    return null;
   }
 
-  return <LinkCard link={link} spec={spec} showDescription={style.showDescription} layout={style.layout} />;
+  return (
+    <div className={`card-image-preview is-${spec.id}`} aria-label={`${spec.label} image preview`}>
+      <img src={image.objectUrl} alt={image.name} />
+    </div>
+  );
 }
 
 interface LinkCardProps {
-  link: Attachment;
+  url: string;
+  preview?: LinkPreview;
   spec: PlatformSpec;
   showDescription: boolean;
   layout: 'large' | 'thumbnail';
 }
 
-function LinkCard({ link, spec, showDescription, layout }: LinkCardProps) {
+function LinkCard({ url, preview, spec, showDescription, layout }: LinkCardProps) {
   const [imageFailed, setImageFailed] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
 
   const Icon = PLATFORM_ICONS[spec.id];
-  const url = link.url ?? '';
   const domain = hostnameOf(url);
-  const preview = link.preview;
   const loading = !preview || preview.status === 'loading';
 
-  // A user-supplied label (not the bare URL) is a better title than the domain.
-  const label = link.name && link.name !== url ? link.name : undefined;
-  const title = preview?.title || label || domain;
+  const title = preview?.title || domain;
   const description = showDescription ? preview?.description : undefined;
   const imageUrl = !imageFailed ? preview?.imageUrl : undefined;
   const logo = preview?.logoUrl || faviconUrl(url);

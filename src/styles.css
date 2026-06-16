@@ -358,7 +358,7 @@ h2 {
   padding: 12px 14px;
   border: 1px solid rgba(124, 58, 237, 0.22);
   border-radius: var(--radius);
-  background: rgba(124, 58, 237, 0.05);
+  background: rgba(124, 58, 237, 0.1);
 }
 
 .ai-assist.is-disabled {
@@ -587,9 +587,11 @@ h2 {
 }
 
 /* Freeform user guidance reads in a lighter grey so it's clearly the user's own
-   text, distinct from the bold field labels. */
+   text, distinct from the bold field labels. The purple tint matches the AI
+   authoring panel so the AI-related fields read as a set. */
 .field-row textarea.style-guidance {
   color: var(--muted);
+  background: rgba(124, 58, 237, 0.1);
 }
 
 .test-result {
@@ -866,6 +868,7 @@ h2 {
 }
 
 .workspace-panel {
+  min-width: 0;
   border: 1px solid rgba(100, 116, 139, 0.22);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.94);
@@ -1919,9 +1922,9 @@ h2 {
   background: var(--surface-alt);
 }
 
-/* ---- AI reference sources & shared media trays ---- */
-.sources-panel,
-.media-tray {
+/* ---- AI reference sources & image attachment ---- */
+.sources-panel {
+  min-width: 0;
   margin: 0 20px 14px;
   border-top: 1px solid var(--line);
   padding-top: 14px;
@@ -1929,21 +1932,18 @@ h2 {
   font-size: 0.875rem;
 }
 
-.sources-panel summary,
-.media-tray summary {
+.sources-panel summary {
   color: var(--ink);
   font-weight: 800;
   cursor: pointer;
 }
 
-.sources-hint,
-.media-hint {
+.sources-hint {
   margin: 10px 0 0;
   line-height: 1.4;
 }
 
-.sources-actions,
-.media-actions {
+.sources-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1951,26 +1951,99 @@ h2 {
   margin-top: 12px;
 }
 
-/* Compact "Add" controls in the media tray (the extra .media-tray scope raises
-   specificity above .secondary-action/.primary-action). */
-.media-tray .media-add,
-.media-tray .media-add-confirm {
-  min-height: 28px;
-  padding: 0 10px;
-  gap: 5px;
-  font-size: 0.78rem;
+.image-attachment-panel {
+  margin: 0 20px 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
-/* File inputs ride inside a label styled as a secondary-action button. */
-.sources-file,
-.media-file {
+.image-attachment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-add-button {
   position: relative;
   overflow: hidden;
   cursor: pointer;
 }
 
-.sources-file input,
-.media-file input {
+.image-add-button input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.image-copy-button.is-copied {
+  color: #15803d;
+}
+
+.image-copy-button.is-error {
+  color: var(--danger);
+}
+
+.image-attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--surface);
+}
+
+.image-attachment-thumb {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--surface-alt);
+}
+
+.image-attachment-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.image-remove-button {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.image-remove-button:hover {
+  background: var(--surface-alt);
+  color: var(--ink);
+}
+
+/* File inputs ride inside a label styled as a secondary-action button. */
+.sources-file {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.sources-file input {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1983,16 +2056,14 @@ h2 {
   color: var(--linkedin-blue-dark);
 }
 
-.sources-input-row,
-.media-link-row {
+.sources-input-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
 }
 
-.sources-input-row input,
-.media-link-row input {
+.sources-input-row input {
   flex: 1 1 200px;
   min-width: 0;
   min-height: 36px;
@@ -2037,16 +2108,18 @@ h2 {
   color: var(--danger);
 }
 
-.sources-list,
-.media-list {
+.sources-list {
   display: grid;
   gap: 8px;
+  min-width: 0;
   margin: 12px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .source-item {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
@@ -2061,6 +2134,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .source-icon {
@@ -2092,10 +2166,7 @@ h2 {
   font-size: 0.8125rem;
 }
 
-.source-remove,
-.media-remove,
-.media-download,
-.media-copy {
+.source-remove {
   display: inline-grid;
   place-items: center;
   width: 26px;
@@ -2108,127 +2179,33 @@ h2 {
   cursor: pointer;
 }
 
-.source-remove:hover,
-.media-remove:hover,
-.media-download:hover,
-.media-copy:hover {
+.source-remove:hover {
   background: var(--surface-alt);
   color: var(--ink);
-}
-
-.media-copy.is-copied {
-  color: #15803d;
-}
-
-.media-copy.is-error {
-  color: var(--danger);
-}
-
-/* File items can be dragged out into a platform's composer. */
-.media-item.is-image,
-.media-item.is-video {
-  cursor: grab;
 }
 
 .source-fallback {
   display: grid;
   gap: 8px;
+  min-width: 0;
   margin-top: 10px;
 }
 
 .source-fallback-note {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
   margin: 0;
   color: var(--danger);
+  overflow-wrap: anywhere;
 }
 
 .source-fallback .secondary-action {
   justify-self: start;
 }
 
-/* Media list items */
-.media-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px 10px;
-  background: var(--surface);
-}
-
-.media-thumb {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 auto;
-  object-fit: cover;
-  border-radius: 6px;
-  background: var(--surface-alt);
-}
-
-.media-link-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 auto;
-  border-radius: 6px;
-  color: var(--linkedin-blue-dark);
-  background: var(--surface-alt);
-}
-
-.media-item-name {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--ink);
-}
-
-/* Per-card attachment strip */
-.card-attachments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 0 12px 8px;
-}
-
-.card-attachment {
-  display: inline-flex;
-  align-items: center;
-}
-
-/* A reference tag — deliberately not button-shaped: dashed edge + tinted fill. */
-.card-attachment.is-link {
-  gap: 5px;
-  max-width: 100%;
-  border: 1px dashed rgba(10, 102, 194, 0.4);
-  border-radius: 6px;
-  padding: 3px 8px;
-  color: var(--linkedin-blue-dark);
-  background: rgba(10, 102, 194, 0.07);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.card-attachment.is-link:hover {
-  background: rgba(10, 102, 194, 0.12);
-  text-decoration: underline;
-}
-
-.card-attachment-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 200px;
-}
-
 /* Per-platform link-unfurl preview card — mirrors how each platform renders a
-   shared URL once posted. Purely illustrative (not part of the copied text). */
+   detected URL once posted. Purely illustrative (not part of the copied text). */
 .card-link-preview {
   display: block;
   margin: 0 0 12px;
@@ -2352,88 +2329,18 @@ h2 {
   flex: 0 0 auto;
 }
 
-/* Instagram (and any platform that doesn't unfurl): a muted explanatory note. */
-.card-link-preview.is-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 8px 10px;
-  border-style: dashed;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.76rem;
-  line-height: 1.35;
-}
-
-.card-link-preview.is-note svg {
-  flex: 0 0 auto;
-  margin-top: 1px;
-}
-
-/* Manual-override editor inside the media tray's link rows. */
-.media-link-row-main {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto auto auto;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
-}
-
-.media-preview-status {
-  flex: 0 0 auto;
-  font-size: 0.68rem;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.media-preview-status.is-failed {
-  color: var(--danger, #b91c1c);
-}
-
-.media-edit-preview {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.media-edit-preview:hover,
-.media-edit-preview.is-active {
-  background: rgba(100, 116, 139, 0.16);
-  color: var(--ink);
-}
-
-.media-preview-form {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
-}
-
-.media-preview-form input {
-  width: 100%;
-  padding: 6px 9px;
+.card-image-preview {
+  margin: 0 0 12px;
   border: 1px solid var(--line);
-  border-radius: 7px;
-  font: inherit;
-  font-size: 0.82rem;
-  background: var(--surface, #fff);
-  color: var(--ink);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface-alt, rgba(15, 23, 42, 0.05));
 }
 
-.media-preview-form-actions {
-  display: flex;
-  gap: 6px;
+.card-image-preview img {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
 }
 

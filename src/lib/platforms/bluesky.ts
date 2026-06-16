@@ -13,6 +13,7 @@ export const blueskySpec: PlatformSpec = {
   truncationLabel: '',
   capabilities: {
     copy: true,
+    imageAttachments: true,
     openComposer: {
       url: (text) => `https://bsky.app/intent/compose?text=${encodeURIComponent(text)}`,
       prefillsText: true,
@@ -20,5 +21,5 @@ export const blueskySpec: PlatformSpec = {
   },
   warnings: [],
   // Bluesky external embeds show a large image, title, description, and domain.
-  linkPreview: { show: true, layout: 'large', showDescription: true },
+  linkPreview: { layout: 'large', showDescription: true },
 };

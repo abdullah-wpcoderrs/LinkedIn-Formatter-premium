@@ -138,17 +138,6 @@ export function faviconUrl(url: string): string {
   return `https://icons.duckduckgo.com/ip3/${host}.ico`;
 }
 
-// The URLs (in order) that get folded into each platform's post text + count.
-export function linkUrls(attachments: Attachment[]): string[] {
-  return attachments.filter((a) => a.kind === 'link' && a.url).slice(0, 1).map((a) => a.url as string);
-}
-
-// The trailing block appended to a platform's post text — one URL per line, set
-// off by a blank line so it reads as a footer. Empty when there are no links.
-export function formatLinksForText(urls: string[]): string {
-  return urls.length ? `\n\n${urls.join('\n')}` : '';
-}
-
 // Only links are persisted; file attachments are dropped (session-only). Stored
 // without the File/objectUrl fields, which don't survive serialization anyway.
 export function loadAttachments(): Attachment[] {
