@@ -8,8 +8,10 @@ import { EditorShell } from './components/EditorShell';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { HelpModal } from './components/HelpModal';
 import { ImageAttachmentControl } from './components/ImageAttachmentControl';
+import { InstallButton } from './components/InstallButton';
 import { LlmSettings } from './components/LlmSettings';
 import { PolypostMark } from './components/PolypostMark';
+import { UpdatePrompt } from './components/UpdatePrompt';
 import { PlatformRail } from './components/PlatformRail';
 import { PlatformToggleChips } from './components/PlatformToggleChips';
 import { loadTheme, saveTheme, type Theme } from './lib/theme';
@@ -20,6 +22,7 @@ import { buildSourcesBlock, loadSources, saveSources, type Source } from './lib/
 import { markdownToTipTap } from './lib/markdownToTipTap';
 import { fetchLinkPreview, lastUrlInText, shouldRefreshLinkPreview } from './lib/linkPreview';
 import { revokeAttachment, type Attachment, type LinkPreview } from './lib/media';
+import { clearActiveAttachment, loadActiveAttachment, putActiveAttachment } from './lib/attachmentStore';
 import { generateFit } from './lib/ai/fit';
 import { generateText } from './lib/ai/llmClient';
 import { buildAuthorRequest } from './lib/ai/prompts';
@@ -122,6 +125,36 @@ function App() {
   useEffect(() => {
     saveSources(sources);
   }, [sources]);
+
+  // Restore a persisted image/video attachment so it survives reload/restart
+  // (PWA). Yields to any attachment the user adds before the load resolves.
+  useEffect(() => {
+    let cancelled = false;
+
+    void loadActiveAttachment().then((restored) => {
+      if (!restored) {
+        return;
+      }
+
+      if (cancelled) {
+        revokeAttachment(restored);
+        return;
+      }
+
+      setImageAttachment((prev) => {
+        if (prev) {
+          revokeAttachment(restored);
+          return prev;
+        }
+
+        return restored;
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // One render + seed document per enabled platform. The document each platform
   // renders/edits from: a user fork wins, then an AI-fitted version, then master.
@@ -373,6 +406,14 @@ function App() {
 
       return image;
     });
+
+    // Persist image/video binaries to IndexedDB so they survive reload/restart;
+    // removals (and non-file attachments) clear the stored blob. Fire-and-forget.
+    if (image?.file) {
+      void putActiveAttachment(image);
+    } else {
+      void clearActiveAttachment();
+    }
   }
 
   function handleMasterChange(nextMaster: EditorNode) {
@@ -526,6 +567,7 @@ function App() {
             <p className="subtitle">Draft once, format for every platform. Connect an AI assistant to help write your post and tailor it to each platform's length and style.</p>
           </div>
           <div className="header-actions">
+            <InstallButton />
             <button type="button" className="header-icon-button" aria-label="How Polypost works" title="Help" onClick={() => setShowHelp(true)}>
               <HelpCircle aria-hidden="true" size={18} />
             </button>
@@ -641,6 +683,7 @@ function App() {
           onCancel={() => setResyncTarget(null)}
         />
       ) : null}
+      <UpdatePrompt />
     </ErrorBoundary>
   );
 }
@@ -658,16 +701,22 @@ function selectAutoAdapt(
 ): { toFit: PlatformId[]; toClear: PlatformId[] } {
   const userForkedIds = new Set(Object.keys(overrides) as PlatformId[]);
   const aiVersionIds = new Set(aiVersions.keys());
-  const styleTargets = config.stylePrompt.trim()
-    ? enabledPlatforms.filter((id) => !userForkedIds.has(id))
-    : [];
+  // Style guidance only targets cards when the editor itself has content —
+  // context/source documents alone must not trigger styling of an empty post.
+  const hasMasterContent = Boolean(docToPlainText(master).trim());
+  const styleActive = Boolean(config.stylePrompt.trim()) && hasMasterContent;
+  const styleTargets = styleActive ? enabledPlatforms.filter((id) => !userForkedIds.has(id)) : [];
   const fitSelection = config.autoFit
     ? selectAutofit({ master, enabledPlatforms, userForkedIds, aiVersionIds })
     : { toFit: [], toClear: [] };
   const enabled = new Set(enabledPlatforms);
   const toFit = [...new Set([...fitSelection.toFit, ...styleTargets])];
+  // With style guidance on but no editor content, drop every existing AI version
+  // so the cards fall back to the (empty) master instead of stale styled text.
   const toClear = config.stylePrompt.trim()
-    ? [...aiVersionIds].filter((id) => !enabled.has(id) || userForkedIds.has(id))
+    ? hasMasterContent
+      ? [...aiVersionIds].filter((id) => !enabled.has(id) || userForkedIds.has(id))
+      : [...aiVersionIds]
     : fitSelection.toClear;
 
   return { toFit, toClear };

@@ -159,11 +159,24 @@ h2 {
   grid-template-columns: 1fr;
 }
 
+/* Multi-column (not grid) so cards pack tightly down each column. A grid would
+   align rows across columns, leaving a tall card's short neighbour with a big gap
+   below it before the next row. */
 .workspace-grid.is-editor-collapsed .platform-rail {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  align-items: start;
+  display: block;
+  columns: 2;
+  column-gap: 16px;
+}
+
+.workspace-grid.is-editor-collapsed .platform-card {
+  margin-bottom: 16px;
+  /* Keep each card whole within a column instead of splitting across the break. */
+  break-inside: avoid;
+}
+
+/* Span the full width above both columns rather than becoming a column item. */
+.workspace-grid.is-editor-collapsed .rail-ai-error {
+  column-span: all;
 }
 
 /* Platform chips share a row with a bare "Hide/Show editor" toggle (no extra row). */
@@ -1704,7 +1717,7 @@ h2 {
 
   /* On narrow screens the collapsed rail stays single-column. */
   .workspace-grid.is-editor-collapsed .platform-rail {
-    grid-template-columns: 1fr;
+    columns: 1;
   }
 
   /* Rail moves below the editor and scrolls with the page. */
@@ -1891,6 +1904,91 @@ h2 {
 
 [data-theme='dark'] .platform-chip.is-enabled {
   border-color: var(--linkedin-blue);
+}
+
+/* ---- PWA update toast ---- */
+.update-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 1000;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 14px 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+}
+
+.update-toast__label {
+  font-size: 0.9rem;
+}
+
+.update-toast__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 999px;
+  background: var(--linkedin-blue);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.update-toast__action:hover,
+.update-toast__action:focus-visible {
+  background: var(--linkedin-blue-dark);
+  outline: none;
+}
+
+/* ---- Reference source preview ---- */
+.modal-card.source-preview {
+  width: min(680px, 100%);
+}
+
+.source-preview-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source-preview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--linkedin-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.source-preview-link:hover,
+.source-preview-link:focus-visible {
+  text-decoration: underline;
+}
+
+.source-preview-body {
+  margin: 0;
+  max-height: min(56vh, 520px);
+  overflow-y: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 [data-theme='dark'] input:not([type='checkbox']):not([type='radio']),
@@ -2148,6 +2246,20 @@ h2 {
   align-items: center;
   gap: 8px;
   min-width: 0;
+}
+
+.source-item-head.is-openable {
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.source-item-head.is-openable:hover {
+  background: var(--surface-alt);
+}
+
+.source-item-head.is-openable:focus-visible {
+  outline: 2px solid var(--linkedin-blue);
+  outline-offset: 2px;
 }
 
 .source-icon {

@@ -3,9 +3,10 @@
 // platform's composer.
 //
 // Persistence split: link attachments are tiny and persist under their own key.
-// Image/video files are session-only — we keep the File + an object URL in memory
-// rather than base64 in localStorage (which would blow the quota). They surface on
-// each card as a download/drag affordance for this session; reload clears them.
+// Image/video files keep their File + object URL in memory rather than base64 in
+// localStorage (which would blow the quota); the raw Blob is persisted separately
+// in IndexedDB (see lib/attachmentStore.ts) so it survives reload/restart and is
+// rehydrated into a fresh object URL on load.
 export type AttachmentKind = 'image' | 'video' | 'link';
 
 // Cached link-unfurl metadata (Open Graph) for a link attachment. Fetched once via
@@ -30,7 +31,8 @@ export interface Attachment {
   url?: string;
   // Link only: cached unfurl metadata for the per-platform preview cards.
   preview?: LinkPreview;
-  // Image/video only (session): the in-memory blob URL and originating file.
+  // Image/video only: the in-memory blob URL and originating file (the Blob is
+  // also persisted to IndexedDB via lib/attachmentStore.ts).
   objectUrl?: string;
   file?: File;
   mime?: string;

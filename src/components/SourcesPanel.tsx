@@ -8,6 +8,7 @@ import {
   withPastedText,
   type Source,
 } from '../lib/ai/sources';
+import { SourcePreview } from './SourcePreview';
 
 interface SourcesPanelProps {
   sources: Source[];
@@ -26,6 +27,7 @@ export function SourcesPanel({ sources, onAddSource, onUpdateSource, onRemoveSou
   const [textTitle, setTextTitle] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewSource, setPreviewSource] = useState<Source | null>(null);
 
   function handleAddText() {
     const trimmed = textValue.trim();
@@ -109,10 +111,18 @@ export function SourcesPanel({ sources, onAddSource, onUpdateSource, onRemoveSou
       {sources.length ? (
         <ul className="sources-list">
           {sources.map((source) => (
-            <SourceItem key={source.id} source={source} onUpdate={onUpdateSource} onRemove={onRemoveSource} />
+            <SourceItem
+              key={source.id}
+              source={source}
+              onUpdate={onUpdateSource}
+              onRemove={onRemoveSource}
+              onOpen={setPreviewSource}
+            />
           ))}
         </ul>
       ) : null}
+
+      {previewSource ? <SourcePreview source={previewSource} onClose={() => setPreviewSource(null)} /> : null}
     </details>
   );
 }
@@ -121,19 +131,37 @@ interface SourceItemProps {
   source: Source;
   onUpdate: (id: string, source: Source) => void;
   onRemove: (id: string) => void;
+  onOpen: (source: Source) => void;
 }
 
-function SourceItem({ source, onUpdate, onRemove }: SourceItemProps) {
+function SourceItem({ source, onUpdate, onRemove, onOpen }: SourceItemProps) {
   const [paste, setPaste] = useState('');
   const needsText = source.status === 'needs-text';
 
   return (
     <li className={`source-item${needsText ? ' is-pending' : ''}`}>
-      <div className="source-item-head">
+      <div
+        className="source-item-head is-openable"
+        role="button"
+        tabIndex={0}
+        title="Double-click to open"
+        onDoubleClick={() => onOpen(source)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            onOpen(source);
+          }
+        }}
+      >
         <SourceIcon source={source} />
         <span className="source-title" title={source.url ?? source.title}>{source.title}</span>
         <span className="source-meta">{source.status === 'ready' ? `${source.charCount.toLocaleString()} chars` : 'needs text'}</span>
-        <button type="button" className="source-remove" aria-label={`Remove ${source.title}`} onClick={() => onRemove(source.id)}>
+        <button
+          type="button"
+          className="source-remove"
+          aria-label={`Remove ${source.title}`}
+          onClick={() => onRemove(source.id)}
+          onDoubleClick={(event) => event.stopPropagation()}
+        >
           <X aria-hidden="true" size={14} />
         </button>
       </div>

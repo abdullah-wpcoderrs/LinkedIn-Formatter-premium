@@ -1,7 +1,8 @@
 // Shared help copy, grouped into sections. Rendered inside a <details> by
 // HelpPanel (used by the browser extension) and inside a modal by HelpModal
-// (used by the web app).
-export function HelpContent() {
+// (used by the web app). `webApp` enables web-only sections (e.g. installing as a
+// PWA) that don't apply to the LinkedIn extension.
+export function HelpContent({ webApp = false }: { webApp?: boolean }) {
   return (
     <div className="help-sections">
       <section className="help-section">
@@ -130,6 +131,27 @@ export function HelpContent() {
           <li>Keyboard shortcuts include Ctrl+B, Ctrl+I, Ctrl+Z, and Ctrl+Y, and work in both the main editor and the platform previews.</li>
         </ul>
       </section>
+
+      {webApp ? (
+        <section className="help-section">
+          <h3>Install as an app (PWA)</h3>
+          <ul className="help-list">
+            <li>
+              Polypost is a Progressive Web App. Use the Install app button in the header — or your browser's install
+              option — to add it to your home screen or desktop and run it in its own window.
+            </li>
+            <li>
+              Works offline: once it has loaded, you can open Polypost and write, edit, and manage drafts with no
+              connection. AI assistance and link previews need the network, so they're unavailable offline.
+            </li>
+            <li>
+              Stays up to date: when a new version is published, a "new version available" prompt appears — reload to
+              update.
+            </li>
+            <li>An attached image or video is saved on this device, so it's restored when you reopen the app.</li>
+          </ul>
+        </section>
+      ) : null}
     </div>
   );
 }

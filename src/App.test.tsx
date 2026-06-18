@@ -89,6 +89,15 @@ describe('App URL preview fetching', () => {
     expect(generateFit).toHaveBeenCalledWith(expect.objectContaining({ style: 'Make it concise and warm.' }));
   });
 
+  it('does not apply style guidance to cards when the editor is empty', () => {
+    render(<App />);
+
+    // No editor content — only style guidance is configured.
+    saveAiSettings('Make it concise and warm.');
+
+    expect(generateFit).not.toHaveBeenCalled();
+  });
+
   it('auto-fits over-limit platform text immediately when AI settings are saved', () => {
     render(<App />);
 
