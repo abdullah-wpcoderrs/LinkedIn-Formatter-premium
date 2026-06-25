@@ -1276,7 +1276,7 @@ h2 {
 }
 
 .rich-editor-content {
-  min-height: 180px;
+  min-height: 225px;
   padding: 26px 30px 36px;
   outline: none;
   color: #1f2937;
@@ -1714,6 +1714,21 @@ h2 {
     grid-template-columns: 1fr;
   }
 
+  /* Single column: shrink the platform chips so all of them stay on one row
+     instead of wrapping. */
+  .platform-chips {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .platform-chip {
+    gap: 5px;
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
   /* On narrow screens the collapsed rail stays single-column. */
   .workspace-grid.is-editor-collapsed .platform-rail {
     columns: 1;
@@ -1740,6 +1755,11 @@ h2 {
 @media (max-width: 640px) {
   .app-header {
     align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  /* Too narrow for seven chips on one row; let them wrap again on phones. */
+  .platform-chips {
     flex-wrap: wrap;
   }
 
