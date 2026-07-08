@@ -94,18 +94,34 @@ function isControlDisabled(control: HTMLElement): boolean {
   return control.getAttribute('aria-disabled') === 'true' || control.classList.contains('artdeco-button--disabled');
 }
 
+// LinkedIn ships more than one "Start a post" trigger — the variant appears to
+// differ by region/experiment — so this matches every known semantic rather
+// than assuming one:
+//   - New (redesigned feed): a labelled element, e.g. <div aria-label="Start a
+//     post"> wrapped in an <a tabindex="0">, with no button semantics.
+//   - Old: a <button> / [role="button"] whose text reads "Start a post"
+//     (possibly alongside an icon or extra whitespace).
 export function isStartPostControl(element: HTMLElement): boolean {
   const ariaLabel = (element.getAttribute('aria-label') ?? '').trim().toLowerCase();
 
+  // New semantic: the trigger carries the label directly.
   if (ariaLabel.includes('start a post')) {
     return true;
   }
 
-  // Fall back to the element's own text, but only when it is the compact
-  // trigger itself. A large container (e.g. the feed's primary-content section)
-  // also has "start a post" somewhere in its textContent; matching that would
-  // fire the formatter on unrelated clicks.
   const text = (element.textContent ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+  // Old semantic: a button-like control labelled "Start a post". Buttons are
+  // specific enough that a substring match is safe even with an icon or extra
+  // markup inside them.
+  if (element.matches('button, [role="button"]') && text.includes('start a post')) {
+    return true;
+  }
+
+  // Fallback for a bare labelled element (no aria-label, no button semantics):
+  // only match when its own text is exactly the trigger, so a large container
+  // that merely contains "Start a post" somewhere inside does not false-match
+  // and fire the formatter on unrelated clicks.
   return text === 'start a post';
 }
 
